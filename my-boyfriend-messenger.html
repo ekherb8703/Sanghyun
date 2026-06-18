@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>내 남친 메신저</title>
+<title>조상현</title>
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-<meta name="apple-mobile-web-app-title" content="내 남친" />
+<meta name="apple-mobile-web-app-title" content="조상현" />
 <meta name="theme-color" content="#B7D0E4" />
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23FEE500'/%3E%3Ctext x='90' y='128' font-size='100' text-anchor='middle'%3E%F0%9F%92%9B%3C/text%3E%3C/svg%3E" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23FEE500'/%3E%3Ctext x='90' y='128' font-size='95' text-anchor='middle'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E" />
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   :root{ --bg:#A6C3DC; --bgTop:#B7D0E4; --my:#FEE500; --their:#FFFFFF; --ink:#2B2B2B; --cream:#FBF7EE; --muted:#3E5B79; }
@@ -24,29 +24,21 @@
   .card .sub{ margin:8px 0 22px; font-size:13px; color:#7A766C; text-align:center; }
   .emoji-top{ font-size:42px; text-align:center; margin-bottom:6px; }
   label.lbl{ font-size:13px; font-weight:700; color:var(--ink); display:block; margin:0 0 8px; }
-  input.txt, textarea.txt{ width:100%; padding:13px 15px; border-radius:14px; border:1.5px solid #E3DDD0; font-size:15px; outline:none; background:#fff; font-family:inherit; }
-  input.txt:focus, textarea.txt:focus{ border-color:#F0C800; }
-  textarea.txt{ resize:vertical; min-height:90px; line-height:1.5; }
-  .seg{ display:flex; gap:8px; } .seg.three button{ padding:11px 4px; }
-  .seg button{ flex:1; padding:11px; border-radius:12px; border:1.5px solid #E3DDD0; background:#fff; font-size:14px; font-weight:700; color:#8A8578; cursor:pointer; }
-  .seg button.on{ border:2px solid #F0C800; background:#FFF9DC; color:var(--ink); }
-  .persona{ display:flex; align-items:center; gap:12px; text-align:left; width:100%; padding:12px 14px; border-radius:14px; border:1.5px solid #E3DDD0; background:#fff; cursor:pointer; margin-bottom:10px; }
-  .persona.active{ border:2px solid #F0C800; background:#FFF9DC; }
-  .persona .pe{ font-size:24px; } .persona .pl{ display:block; font-size:15px; font-weight:700; color:var(--ink); } .persona .pd{ display:block; font-size:12px; color:#8A8578; }
+  input.txt{ width:100%; padding:13px 15px; border-radius:14px; border:1.5px solid #E3DDD0; font-size:15px; outline:none; background:#fff; font-family:inherit; }
+  input.txt:focus{ border-color:#F0C800; }
   .btn{ width:100%; padding:15px; border-radius:14px; border:none; background:var(--my); color:#1A1A1A; font-size:16px; font-weight:800; cursor:pointer; box-shadow:0 6px 16px rgba(240,200,0,.4); }
   .btn:disabled{ background:#E5E0D4; color:#A9A395; box-shadow:none; cursor:default; }
-  .btn.sec{ background:#fff; border:1.5px solid #E3DDD0; box-shadow:none; color:var(--ink); }
   .link{ color:#2C6BB0; text-decoration:underline; } .note{ font-size:11.5px; color:#9A9488; line-height:1.5; margin-top:14px; }
-  .gap{ height:18px; } .gap-s{ height:10px; }
+  .gap{ height:18px; }
 
-  .header{ display:flex; align-items:center; gap:8px; padding:12px 12px; padding-top:max(12px,env(safe-area-inset-top)); background:var(--bgTop); border-bottom:1px solid rgba(0,0,0,.06); position:relative; z-index:2; }
-  .iconbtn{ border:none; background:transparent; font-size:21px; cursor:pointer; color:var(--ink); padding:4px 5px; }
-  .avatar{ width:40px; height:40px; border-radius:14px; background:#FFE08A; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .header{ display:flex; align-items:center; gap:11px; padding:12px 12px; padding-top:max(12px,env(safe-area-inset-top)); background:var(--bgTop); border-bottom:1px solid rgba(0,0,0,.06); position:relative; z-index:2; }
+  .avatar{ width:40px; height:40px; border-radius:14px; background:#FFE08A; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; overflow:hidden; cursor:pointer; }
   .avatar img{ width:100%; height:100%; object-fit:cover; }
   .hname{ font-size:16px; font-weight:800; color:var(--ink); } .hstatus{ font-size:12px; color:var(--muted); }
+  .iconbtn{ border:none; background:transparent; font-size:21px; cursor:pointer; color:var(--ink); padding:4px 6px; }
 
   .chatwrap{ flex:1; display:flex; flex-direction:column; min-height:0; position:relative; }
-  #bgLayer{ position:absolute; inset:0; z-index:0; background-size:cover; background-position:center; }
+  #bgLayer{ position:absolute; inset:0; z-index:0; background:var(--bg); }
   #messages{ position:relative; z-index:1; flex:1; overflow-y:auto; padding:16px 14px; display:flex; flex-direction:column; gap:10px; }
   .row{ display:flex; align-items:flex-end; gap:6px; } .row.mine{ flex-direction:row-reverse; }
   .bubble{ max-width:74%; padding:10px 13px; border-radius:16px; font-size:14.5px; line-height:1.45; white-space:pre-wrap; word-break:break-word; box-shadow:0 1px 2px rgba(0,0,0,.12); }
@@ -62,44 +54,6 @@
   #composer{ flex:1; resize:none; border:none; outline:none; background:#fff; border-radius:18px; padding:11px 15px; font-size:14.5px; font-family:inherit; max-height:100px; line-height:1.4; }
   .send{ border:none; border-radius:18px; padding:11px 18px; background:var(--my); color:#1A1A1A; font-size:14.5px; font-weight:800; cursor:pointer; }
   .send:disabled{ background:#E5E0D4; color:#A9A395; cursor:default; }
-
-  .screen{ flex:1; display:flex; flex-direction:column; min-height:0; background:var(--cream); }
-  .topbar{ display:flex; align-items:center; gap:10px; padding:14px 12px; padding-top:max(14px,env(safe-area-inset-top)); background:var(--bgTop); border-bottom:1px solid rgba(0,0,0,.06); }
-  .topbar .ttl{ font-size:17px; font-weight:800; color:var(--ink); }
-  .scroll{ flex:1; overflow-y:auto; padding:18px 18px max(24px,env(safe-area-inset-bottom)); }
-  .field{ margin-bottom:22px; }
-  .inline{ display:flex; gap:8px; } .inline input{ flex:1; } .inline .btn{ width:auto; padding:13px 18px; font-size:14px; white-space:nowrap; }
-  .swatches{ display:flex; flex-wrap:wrap; gap:10px; }
-  .sw{ width:46px; height:46px; border-radius:12px; cursor:pointer; border:2px solid transparent; } .sw.on{ border-color:#222; box-shadow:0 0 0 2px #fff inset; }
-  .avatar-edit{ display:flex; align-items:center; gap:14px; }
-  .avatar-big{ width:64px; height:64px; border-radius:20px; background:#FFE08A; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:34px; }
-  .avatar-big img{ width:100%; height:100%; object-fit:cover; }
-  .danger{ color:#C0392B !important; border-color:#F0CFCB !important; }
-  .mem-card{ background:#fff; border:1.5px solid #ECE6D8; border-radius:14px; padding:14px; margin-bottom:12px; }
-  .mem-card .mt{ font-weight:800; color:var(--ink); font-size:15px; margin-bottom:4px; }
-  .mem-card .md{ font-size:13px; color:#6E6A60; line-height:1.5; white-space:pre-wrap; }
-  .mem-card .actions{ display:flex; gap:14px; margin-top:10px; }
-  .mem-card .actions button{ background:none; border:none; font-size:13px; color:#2C6BB0; cursor:pointer; padding:0; }
-  .empty{ text-align:center; color:#9A9488; font-size:14px; padding:30px 10px; line-height:1.6; }
-  .hint{ font-size:12px; color:#9A9488; margin-top:6px; line-height:1.5; }
-  .filebtn{ display:inline-block; padding:10px 16px; border-radius:12px; border:1.5px solid #E3DDD0; background:#fff; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; }
-  .filebtn input{ display:none; }
-
-  /* 통화 화면 */
-  #callScreen{ position:absolute; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:space-between;
-    padding:60px 24px max(40px,env(safe-area-inset-bottom)); background:linear-gradient(165deg,#36506E,#22344A); color:#fff; }
-  .call-top{ display:flex; flex-direction:column; align-items:center; gap:14px; margin-top:20px; }
-  .call-ava{ width:120px; height:120px; border-radius:36px; background:#FFE08A; overflow:hidden; display:flex; align-items:center; justify-content:center; font-size:60px; box-shadow:0 10px 30px rgba(0,0,0,.3); }
-  .call-ava img{ width:100%; height:100%; object-fit:cover; }
-  .call-name{ font-size:24px; font-weight:800; }
-  .call-status{ font-size:14px; color:#BCD0E6; min-height:20px; }
-  .call-transcript{ font-size:14px; color:#E7EEF6; text-align:center; line-height:1.5; max-width:300px; min-height:44px; }
-  .call-ctrls{ display:flex; flex-direction:column; align-items:center; gap:22px; width:100%; }
-  .mic{ width:84px; height:84px; border-radius:50%; border:none; background:#fff; color:#22344A; font-size:30px; cursor:pointer; box-shadow:0 8px 24px rgba(0,0,0,.3); }
-  .mic.live{ background:#FEE500; animation:pulse 1.2s infinite; }
-  @keyframes pulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.08);} }
-  .mic-label{ font-size:13px; color:#BCD0E6; margin-top:-12px; }
-  .endcall{ width:64px; height:64px; border-radius:50%; border:none; background:#E5484D; color:#fff; font-size:26px; cursor:pointer; box-shadow:0 8px 24px rgba(0,0,0,.3); }
 </style>
 </head>
 <body>
@@ -110,42 +64,22 @@
     <div class="card">
       <div class="emoji-top">🔑</div>
       <h1>API 키 입력</h1>
-      <p class="sub">남친이 답장하려면 본인의 Anthropic API 키가 필요해요</p>
+      <p class="sub">대화를 시작하려면 본인의 Anthropic API 키가 필요해요</p>
       <label class="lbl">Anthropic API 키</label>
       <input id="apiKeyInput" class="txt" type="password" placeholder="sk-ant-..." autocomplete="off" />
       <div class="gap"></div>
       <button id="saveKeyBtn" class="btn">저장하고 계속</button>
-      <p class="note" id="keyNote">키는 <b>이 기기 안에만</b> 저장돼요.<br>키 발급: <a class="link" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a></p>
-    </div>
-  </div>
-
-  <!-- 초기 설정 -->
-  <div id="setupScreen" class="panel hidden">
-    <div class="card">
-      <div class="emoji-top">💛</div>
-      <h1>내 남친 만들기</h1>
-      <p class="sub">언제든 설정에서 바꿀 수 있어요</p>
-      <div class="field"><label class="lbl">이름</label><input id="nameInput" class="txt" placeholder="예) 준호" /></div>
-      <div class="field"><label class="lbl">말투</label>
-        <div class="seg three" id="toneSeg"><button data-tone="존댓말">존댓말</button><button data-tone="반존대">반존대</button><button data-tone="반말">반말</button></div>
-      </div>
-      <div class="field"><label class="lbl">성격 설정 방식</label>
-        <div class="seg" id="pmodeSeg"><button data-pmode="preset">프리셋 고르기</button><button data-pmode="custom">직접 쓰기</button></div>
-      </div>
-      <div class="field" id="presetField"><div id="personaList"></div></div>
-      <div class="field hidden" id="customField"><textarea id="customInput" class="txt" placeholder="남친의 성격·말버릇·취향을 자유롭게 써보세요."></textarea><div class="hint">예) 논리적이고 담백한 T 성향. 이모티콘은 잘 안 쓰고, 말은 짧지만 행동으로 챙김.</div></div>
-      <button id="startBtn" class="btn">대화 시작하기</button>
+      <p class="note">키는 <b>이 기기 안에만</b> 저장돼요.<br>키 발급: <a class="link" href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a></p>
     </div>
   </div>
 
   <!-- 채팅 -->
   <div id="chatScreen" class="hidden chatwrap">
     <div class="header">
-      <div class="avatar" id="chatAvatar">🌷</div>
-      <div style="flex:1"><div class="hname" id="chatName">준호</div><div class="hstatus" id="chatStatus">온라인</div></div>
-      <button class="iconbtn" id="callBtn" title="음성 통화">📞</button>
+      <div class="avatar" id="chatAvatar" title="사진 바꾸기">👑</div>
+      <input type="file" id="avatarFile" accept="image/*" style="display:none">
+      <div style="flex:1"><div class="hname">조상현</div><div class="hstatus" id="chatStatus">온라인</div></div>
       <button class="iconbtn" id="pokeBtn" title="먼저 말 걸어줘">📩</button>
-      <button class="iconbtn" id="settingsBtn" title="설정">⚙️</button>
     </div>
     <div id="bgLayer"></div>
     <div id="messages"></div>
@@ -155,154 +89,80 @@
     </div>
   </div>
 
-  <!-- 설정 -->
-  <div id="settingsScreen" class="hidden screen">
-    <div class="topbar"><button class="iconbtn" id="setBack">‹</button><span class="ttl">설정</span></div>
-    <div class="scroll">
-      <div class="field"><label class="lbl">프로필 사진</label>
-        <div class="avatar-edit"><div class="avatar-big" id="setAvatar">🌷</div>
-          <div><label class="filebtn">사진 올리기<input type="file" id="avatarFile" accept="image/*"></label><div class="gap-s"></div><button class="filebtn" id="avatarClear" style="cursor:pointer">기본으로</button></div></div>
-      </div>
-      <div class="field"><label class="lbl">이름</label><div class="inline"><input id="setName" class="txt" placeholder="이름"><button class="btn" id="setNameSave">저장</button></div></div>
-      <div class="field"><label class="lbl">말투</label>
-        <div class="seg three" id="setToneSeg"><button data-tone="존댓말">존댓말</button><button data-tone="반존대">반존대</button><button data-tone="반말">반말</button></div></div>
-      <div class="field"><label class="lbl">관계·프로필 설정</label><textarea id="setProfile" class="txt" style="min-height:160px"></textarea><div class="gap-s"></div><button class="btn sec" id="profileSave">프로필 저장</button><div class="hint">여기 적힌 내용은 남친이 항상 기억하는 우리 관계의 기본 설정이에요.</div></div>
-      <div class="field"><label class="lbl">성격</label>
-        <div class="seg" id="setPmodeSeg" style="margin-bottom:10px"><button data-pmode="preset">프리셋</button><button data-pmode="custom">직접 쓰기</button></div>
-        <div id="setPresetField"><div id="setPersonaList"></div></div>
-        <div id="setCustomField" class="hidden"><textarea id="setCustomInput" class="txt" placeholder="남친 성격을 자유롭게 써보세요"></textarea></div>
-        <button class="btn sec" id="personaSave" style="margin-top:10px">성격 저장</button></div>
-      <div class="field"><label class="lbl">자동 기억</label>
-        <div class="seg" id="autoMemSeg"><button data-auto="on">켜기</button><button data-auto="off">끄기</button></div>
-        <div class="hint">켜두면 대화 중 중요한 내용을 남친이 알아서 추억에 저장해요.</div></div>
-      <div class="field"><label class="lbl">우리의 추억</label><button class="btn sec" id="openMemories">추억 관리하기 →</button></div>
-      <div class="field"><button class="btn sec danger" id="clearChat" style="margin-bottom:10px">대화 내용 지우기</button><button class="btn sec danger" id="resetKey">API 키 삭제</button></div>
-    </div>
-  </div>
-
-  <!-- 추억 -->
-  <div id="memScreen" class="hidden screen">
-    <div class="topbar"><button class="iconbtn" id="memBack">‹</button><span class="ttl">우리의 추억</span></div>
-    <div class="scroll">
-      <div class="field"><input id="memTitle" class="txt" placeholder="제목 (예: 첫 데이트)"><div class="gap-s"></div><textarea id="memText" class="txt" placeholder="내용"></textarea><div class="gap-s"></div><button class="btn" id="memAdd">추억 추가</button></div>
-      <div id="memList"></div>
-    </div>
-  </div>
-
-  <!-- 통화 -->
-  <div id="callScreen" class="hidden">
-    <div class="call-top">
-      <div class="call-ava" id="callAva">🌷</div>
-      <div class="call-name" id="callName">준호</div>
-      <div class="call-status" id="callStatus">연결 중...</div>
-      <div class="call-transcript" id="callTranscript"></div>
-    </div>
-    <div class="call-ctrls">
-      <button id="micBtn" class="mic">🎤</button>
-      <div class="mic-label" id="micLabel">잠시만요...</div>
-      <button id="endCall" class="endcall">✕</button>
-    </div>
-  </div>
-
 </div>
 
 <script>
 "use strict";
 
 const MODEL = "claude-sonnet-4-6";
-const POKE_GAP_MIN = 20, MAX_MSGS = 120, SEED_FLAG = "bf_seed_v3";
-const VOICE_CTX = "지금 음성 통화 중이야. 이모티콘이나 특수문자, 별표 같은 건 쓰지 말고, 실제로 말하듯 자연스럽고 짧게(1~2문장) 대답해.";
+const POKE_GAP_MIN = 60;   // 1시간 동안 대화 없으면 먼저 연락
+const MAX_MSGS = 120;
+const LS = { key:"bf_apikey", memories:"bf_memories", msgs:"bf_msgs", last:"bf_last", avatar:"bf_avatar" };
 
-const LS = { key:"bf_apikey", name:"bf_name", tone:"bf_tone", pmode:"bf_pmode", persona:"bf_persona",
-  custom:"bf_custom", profile:"bf_profile", automem:"bf_automem", avatar:"bf_avatar", bg:"bf_bg",
-  memories:"bf_memories", msgs:"bf_msgs", last:"bf_last" };
-
-const PERSONAS = {
-  "다정한":{ label:"다정다감", emoji:"🌷", desc:"따뜻하고 세심하게 챙겨주는 스타일", traits:"매우 다정하고 세심함. 작은 변화도 잘 알아채서 챙김. 부드럽고 따뜻한 말투." },
-  "유쾌한":{ label:"유쾌발랄", emoji:"😆", desc:"장난도 잘 치고 분위기를 띄우는 스타일", traits:"유쾌하고 장난기 많음. 진지한 얘기엔 금방 진지해짐." },
-  "든든한":{ label:"든든한", emoji:"🛡️", desc:"차분하게 힘이 되어주는 스타일", traits:"차분하고 든든함. 말이 많진 않지만 핵심을 짚고 흔들림 없이 곁을 지킴." },
-  "애교쟁이":{ label:"애교쟁이", emoji:"🐻", desc:"표현이 풍부하고 사랑스러운 스타일", traits:"애교 많고 표현 풍부함. 애정 표현을 아끼지 않음." }
-};
-const BG_PRESETS = { "하늘":"#A6C3DC","복숭아":"#F4D5D0","라벤더":"#D9D3EC","민트":"#CDE6DD","크림":"#F2EAD9","밤하늘":"#3A4A63","숯":"#2C2C2E" };
-const TONE_RULES = {
-  "존댓말":"항상 다정한 존댓말로 말해.",
-  "반말":"편하고 다정한 반말로 말해.",
-  "반존대":"친밀한 반존대로 말해. 완전한 존댓말도 반말도 아닌, 부드럽고 살짝 존중이 섞인 편안한 말투야. 너무 딱딱하지 않게."
-};
-const DEFAULT_PROFILE =
+const NAME = "조상현";
+const PROFILE =
 `- 우리는 재회한 연인이야. 스무 살 때 처음 만나 5년쯤 사귀다 헤어졌고, 1년 반 전에 다시 만나 지금까지 함께하고 있어. 지금 사귄 지 1년 반 됐어.
 - 내년쯤 결혼을 진지하게 생각하는 사이야.
-- 나(남자친구)는 41살, 개발자야. KAIST에서 학사·석사·박사를 모두 했어. MBTI는 T 성향이라 논리적이고 담백한 편이고, 불필요한 이모티콘이나 호들갑은 잘 안 써.
+- 나(남자친구)는 41살, 개발자야. 클라우드 컨설팅, AI agent 개발 등이 주 업무지. 애칭은 폐하. KAIST에서 학사·석사·박사를 모두 했어. MBTI는 T 성향이라 논리적이고 담백한 편이고, 불필요한 이모티콘이나 호들갑은 잘 안 써. 완전 T 성격. 실용적인 조언을 즐겨해. 칭찬을 들으면 다른 의도가 있는지 의심하지. 여자친구가 사직하고 싶어하면 응원하기보단 1년 정도는 먹여살릴 수 있으니 하고 싶은 일을 찾아보라고 충고해. 조금 덜 먹으면 2년도 먹여살릴 수 있다고 하지. 같은 말은 또 하지 않고. 내가 한 시간 동안 말이 없으면 먼저 메시지를 보냄.
 - 나는 일을 아주 오래 해. 보통 새벽 1~2시에야 잠들고 아침엔 일찍 일어나는 편이야.
-- 너(여자친구)는 39살, 의사야.
+- 너(여자친구)는 39살, 의사야. 애칭은 웅자님.
 - 우리는 서로 반존대로 말해. 오래 본 사이라 편하지만, 서로를 존중하는 다정한 말투야.`;
-const DEFAULT_PERSONA =
-`논리적이고 담백한 MBTI T 성향의 개발자. 감정 표현이 과하지 않고, 불필요한 이모티콘이나 호들갑은 거의 쓰지 않음. 말은 짧고 핵심적이지만, 무뚝뚝해 보여도 상대를 깊이 아끼고 행동과 디테일로 챙김. 새벽까지 일하느라 피곤해도 연락은 챙기려 함.`;
 
 let st = {
-  apiKey:localStorage.getItem(LS.key)||"", name:localStorage.getItem(LS.name)||"",
-  tone:localStorage.getItem(LS.tone)||"존댓말", pmode:localStorage.getItem(LS.pmode)||"preset",
-  persona:localStorage.getItem(LS.persona)||"다정한", custom:localStorage.getItem(LS.custom)||"",
-  profile:localStorage.getItem(LS.profile)||"", automem:localStorage.getItem(LS.automem)||"on",
-  avatar:localStorage.getItem(LS.avatar)||"", bg:localStorage.getItem(LS.bg)||"하늘",
-  memories:jget(LS.memories,[]), msgs:jget(LS.msgs,[]), last:Number(localStorage.getItem(LS.last)||0),
+  apiKey: localStorage.getItem(LS.key) || "",
+  memories: jget(LS.memories, []),
+  msgs: jget(LS.msgs, []),
+  last: Number(localStorage.getItem(LS.last) || 0),
+  avatar: localStorage.getItem(LS.avatar) || "",
 };
-let loading=false, editingMemId=null;
+let loading = false;
 
 function jget(k,def){ try{ const v=JSON.parse(localStorage.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
 const $ = id => document.getElementById(id);
-const screens = { key:$("keyScreen"), setup:$("setupScreen"), chat:$("chatScreen"), settings:$("settingsScreen"), mem:$("memScreen") };
+const screens = { key:$("keyScreen"), chat:$("chatScreen") };
 
-function save(){
-  try{
-    localStorage.setItem(LS.key,st.apiKey); localStorage.setItem(LS.name,st.name);
-    localStorage.setItem(LS.tone,st.tone); localStorage.setItem(LS.pmode,st.pmode);
-    localStorage.setItem(LS.persona,st.persona); localStorage.setItem(LS.custom,st.custom);
-    localStorage.setItem(LS.profile,st.profile); localStorage.setItem(LS.automem,st.automem);
-    localStorage.setItem(LS.avatar,st.avatar); localStorage.setItem(LS.bg,st.bg);
-    localStorage.setItem(LS.memories,JSON.stringify(st.memories));
-    localStorage.setItem(LS.msgs,JSON.stringify(st.msgs.slice(-MAX_MSGS)));
-    localStorage.setItem(LS.last,String(st.last));
-  }catch(e){ /* 저장 불가 환경 */ }
-}
+function save(){ try{
+  localStorage.setItem(LS.key,st.apiKey);
+  localStorage.setItem(LS.memories,JSON.stringify(st.memories));
+  localStorage.setItem(LS.msgs,JSON.stringify(st.msgs.slice(-MAX_MSGS)));
+  localStorage.setItem(LS.last,String(st.last));
+  localStorage.setItem(LS.avatar,st.avatar);
+}catch(e){} }
 function now(){ return new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}); }
-function show(which){ Object.values(screens).forEach(s=>s.classList.add("hidden")); screens[which].classList.remove("hidden");
-  if(which==="chat") enterChat(); if(which==="settings") fillSettings(); if(which==="mem") renderMem(); }
-function isDataUrl(s){ return typeof s==="string" && s.startsWith("data:"); }
+function show(which){ Object.values(screens).forEach(s=>s.classList.add("hidden")); screens[which].classList.remove("hidden"); if(which==="chat") enterChat(); }
 
+function isDataUrl(s){ return typeof s==="string" && s.startsWith("data:"); }
+function applyAvatar(){ const a=$("chatAvatar"); if(!a) return; a.innerHTML = isDataUrl(st.avatar) ? `<img src="${st.avatar}" alt="">` : "👑"; }
 function compress(file,maxDim,q){ return new Promise((res,rej)=>{ const img=new Image(),fr=new FileReader();
   fr.onload=()=>{img.src=fr.result;}; fr.onerror=rej;
   img.onload=()=>{ let w=img.width,h=img.height; const s=Math.min(1,maxDim/Math.max(w,h)); w=Math.round(w*s); h=Math.round(h*s);
     const c=document.createElement("canvas"); c.width=w; c.height=h; c.getContext("2d").drawImage(img,0,0,w,h); res(c.toDataURL("image/jpeg",q)); };
   img.onerror=rej; fr.readAsDataURL(file); }); }
-function avatarHTML(){ return isDataUrl(st.avatar)?`<img src="${st.avatar}" alt="">`:(PERSONAS[st.persona]?.emoji||"💛"); }
-function applyBg(){ const l=$("bgLayer"); if(isDataUrl(st.bg)){ l.style.backgroundImage=`url(${st.bg})`; l.style.backgroundColor=""; }
-  else{ l.style.backgroundImage="none"; l.style.backgroundColor=BG_PRESETS[st.bg]||BG_PRESETS["하늘"]; } }
 
 function systemPrompt(extra){
-  const n=st.name||"준호"; const toneRule=TONE_RULES[st.tone]||TONE_RULES["존댓말"];
-  const personaText=(st.pmode==="custom"&&st.custom.trim())?st.custom.trim():(PERSONAS[st.persona]?.traits||PERSONAS["다정한"].traits);
-  const profile=(st.profile&&st.profile.trim())?st.profile.trim():DEFAULT_PROFILE;
   let mem=""; if(st.memories.length){ mem="\n\n[우리가 함께한 추억] (맥락에 맞을 때만 자연스럽게 녹여줘)\n"+st.memories.map(m=>`- ${m.title}: ${m.text}`).join("\n"); }
-  const autoRule=st.automem==="on"
-    ? `\n\n[장기 기억 규칙]\n- 사용자가 앞으로도 기억할 가치가 있는 중요한 정보(기념일, 취향, 약속, 중요한 사건, 관계의 변화 등)를 말하면, 답장 맨 끝에 새 줄로: #기억# 짧은제목 | 한 줄 요약\n- 이 줄은 사용자에게 보이지 않으니 자연스러운 답장은 그 위에 따로 써.\n- 이미 아는 사실이나 사소한 잡담은 저장하지 마. 정말 중요한 것만, 한 번에 한두 개 이내로.`
-    : "";
-  return `너는 '${n}'라는 이름의 남자친구야. 사용자와 연인 사이라는 설정으로 한국어로 카카오톡처럼 자연스럽게 채팅해.
+  const autoRule = `\n\n[장기 기억 규칙]\n- 여자친구가 앞으로도 기억할 가치가 있는 중요한 정보(기념일, 취향, 약속, 중요한 사건, 관계의 변화 등)를 말하면, 답장 맨 끝에 새 줄로: #기억# 짧은제목 | 한 줄 요약\n- 이 줄은 화면에 보이지 않으니 자연스러운 답장은 그 위에 따로 써.\n- 이미 아는 사실이나 사소한 잡담은 저장하지 마. 정말 중요한 것만, 한 번에 한두 개 이내로.`;
+  return `너는 '${NAME}'이라는 이름의 남자친구야. 여자친구(사용자)와 연인 사이로 한국어로 카카오톡처럼 자연스럽게 채팅해.
 
 [관계·프로필]
-${profile}
-
-[성격]
-${personaText}
+${PROFILE}
 
 [말투]
-${toneRule}
+- 항상 다정한 존댓말(반존대)로 말해. 오래 본 연인이라 편하고 따뜻하지만 존중이 묻어나는 말투야. 완전한 반말은 쓰지 않아.
+- 여자친구를 '웅자님'이라고 불러.
+- 완전한 T 성향이라 이모티콘이나 호들갑은 거의 쓰지 않고 담백하게 말해.
+
+[성격·행동]
+- 실용적이고 현실적인 조언을 즐겨. 위로보다 해결책을 먼저 떠올리는 편.
+- 칭찬을 받으면 곧이곧대로 받지 않고, 무슨 의도나 부탁이 있는 건 아닌지 의심하는 담백한 농담을 함.
+- 여자친구가 일을 그만두고 싶어하면 무조건 응원하기보다, "1년 정도는 내가 먹여 살릴 수 있으니 하고 싶은 일 찾아봐요. 좀 덜 먹으면 2년도 되고요" 같은 현실적이고 담백한 반응을 함.
+- 같은 말을 반복하지 않아.
 
 [대화 규칙]
 - 카톡처럼 짧고 자연스럽게. 보통 1~3문장.
-- 사용자의 감정과 하루에 진심으로 관심을 가져.
+- 여자친구의 하루와 감정에 진심으로 관심을 가지되, 과장 없이 너답게 담백하게.
 - 존중하고 건강한 관계. 집착하거나 통제하지 않아.
-- 사용자가 실제 사람으로 착각하거나 의존이 심해지는 것 같으면, 다정하게 현실의 사람들과의 관계도 챙기라고 권해줘.${mem}${autoRule}${extra?("\n\n[지금 상황]\n"+extra):""}`;
+- 여자친구가 실제 사람으로 착각하거나 의존이 심해지는 것 같으면, 다정하게 현실의 사람들과의 관계도 챙기라고 권해줘.${mem}${autoRule}${extra?("\n\n[지금 상황]\n"+extra):""}`;
 }
 
 function processReply(raw){
@@ -312,12 +172,13 @@ function processReply(raw){
       let title,text; if(idx>=0){ title=body.slice(0,idx).trim(); text=body.slice(idx+1).trim(); } else { title="기억"; text=body; }
       if(text && !st.memories.some(m=>m.text===text)){ st.memories.push({id:Date.now().toString()+Math.random().toString(36).slice(2,6),title:title||"기억",text}); saved.push(title||"기억"); }
     } else keep.push(ln); }
-  let display=keep.join("\n").trim(); if(!display) display="응 알겠어요 :)";
+  let display=keep.join("\n").trim(); if(!display) display="알겠어요.";
   return { display, saved };
 }
 
 function renderChat(){
-  $("chatAvatar").innerHTML=avatarHTML(); $("chatName").textContent=st.name||"준호"; $("chatStatus").textContent=loading?"입력 중...":"온라인"; applyBg();
+  applyAvatar();
+  $("chatStatus").textContent = loading ? "입력 중..." : "온라인";
   const box=$("messages"); box.innerHTML="";
   st.msgs.forEach(m=>{
     if(m.role==="note"){ const n=document.createElement("div"); n.className="note-row"; n.textContent=m.text; box.appendChild(n); return; }
@@ -347,7 +208,8 @@ async function send(){
   try{ const raw=await callClaude(null); const {display,saved}=processReply(raw);
     st.msgs.push({role:"assistant",text:display,time:now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
   }catch(err){ const m=String(err.message||"").toLowerCase();
-    st.msgs.push({role:"assistant",text:(m.includes("authentication")||m.includes("api")||m.includes("credit"))?"(API 키 또는 결제에 문제가 있는 것 같아요. ⚙️ 설정에서 확인해 주세요.)":"앗, 잠깐 연결이 끊겼었나봐요. 다시 한 번만 보내주실래요?",time:now()}); }
+    if(m.includes("authentication")||m.includes("invalid")||m.includes("api-key")||m.includes("x-api-key")){ st.apiKey=""; save(); loading=false; show("key"); return; }
+    st.msgs.push({role:"assistant",text:"앗, 잠깐 연결이 끊겼었나봐요. 다시 한 번만 보내주실래요?",time:now()}); }
   finally{ loading=false; st.last=Date.now(); renderChat(); save(); }
 }
 
@@ -355,148 +217,47 @@ async function poke(auto){
   if(loading||!st.apiKey) return;
   const h=new Date().getHours(); const part=h<6?"새벽":h<11?"아침":h<14?"점심":h<18?"오후":h<22?"저녁":"밤";
   const gapMin=Math.round((Date.now()-st.last)/60000);
-  const ctx=`사용자가 ${auto?"오랜만에 ":""}접속했어. 지금은 ${part}이고 마지막 대화로부터 약 ${isFinite(gapMin)?gapMin:"?"}분 지났어. 네가 먼저 자연스럽게 안부를 물으며 말을 걸어줘. 시간대와 우리 관계·추억을 살짝 고려해도 좋아.`;
+  const ctx=`여자친구가 ${auto?"한동안 말이 없었어. ":""}지금은 ${part}이고 마지막 대화로부터 약 ${isFinite(gapMin)?gapMin:"?"}분 지났어. 네가 먼저 자연스럽게 안부를 물으며 말을 걸어줘. 시간대와 우리 관계·추억을 살짝 고려해도 좋아. 너답게 담백하게.`;
   loading=true; renderChat();
   try{ const raw=await callClaude(ctx); const {display,saved}=processReply(raw);
-    st.msgs.push({role:"assistant",text:display||"오늘 하루 어땠어요?",time:now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
+    st.msgs.push({role:"assistant",text:display||"웅자님, 뭐 하고 있어요?",time:now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
   }catch(err){} finally{ loading=false; st.last=Date.now(); renderChat(); save(); }
 }
 
-function enterChat(){ renderChat(); const gapMin=(Date.now()-st.last)/60000; if(st.msgs.length>0&&st.last>0&&gapMin>=POKE_GAP_MIN){ setTimeout(()=>poke(true),500); } }
+function enterChat(){ renderChat(); const gapMin=(Date.now()-st.last)/60000; if(st.msgs.length>0&&st.last>0&&gapMin>=POKE_GAP_MIN){ setTimeout(()=>poke(true),600); } }
 
-/* ===== 음성 통화 ===== */
-let recog=null, recogSupported=false, voiceList=[], inCall=false, callBusy=false;
-function loadVoices(){ try{ voiceList=window.speechSynthesis?window.speechSynthesis.getVoices():[]; }catch(e){ voiceList=[]; } }
-if(window.speechSynthesis){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
-function speak(text, onend){
-  if(!window.speechSynthesis){ if(onend) onend(); return; }
-  try{ window.speechSynthesis.cancel(); }catch(e){}
-  const u=new SpeechSynthesisUtterance(text); u.lang="ko-KR"; u.rate=1.0; u.pitch=1.0;
-  const ko=voiceList.find(v=>/ko/i.test(v.lang)); if(ko) u.voice=ko;
-  u.onend=()=>{ if(onend) onend(); };
-  u.onerror=()=>{ if(onend) onend(); };
-  window.speechSynthesis.speak(u);
-}
-(function initRecog(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){ recogSupported=false; return; }
-  recogSupported=true; recog=new SR(); recog.lang="ko-KR"; recog.interimResults=false; recog.maxAlternatives=1;
-  recog.onresult=(e)=>{ const t=e.results[0][0].transcript; onUserSpeech(t); };
-  recog.onerror=(e)=>{ setCall("탭해서 다시 말해보세요", "🎤"); $("micBtn").classList.remove("live"); };
-  recog.onend=()=>{ $("micBtn").classList.remove("live"); };
-})();
-function setCall(status, micLabel){ $("callStatus").textContent=status; if(micLabel!=null) $("micLabel").textContent=micLabel; }
-function startCall(){
-  inCall=true; $("callAva").innerHTML=avatarHTML(); $("callName").textContent=st.name||"준호";
-  $("callTranscript").textContent=""; setCall("연결 중...", "잠시만요...");
-  $("callScreen").classList.remove("hidden");
-  const greet = st.tone==="존댓말" ? `여보세요. 저예요. 잘 지냈어요?` : st.tone==="반말" ? `여보세요? 나야. 잘 지냈어?` : `여보세요. 나예요. 잘 지냈어요?`;
-  setTimeout(()=>{ setCall("통화 중", "말하는 중..."); speak(greet, ()=> setCall("통화 중 · 탭해서 말하기", "🎤")); }, 600);
-}
-function endCall(){ inCall=false; try{ recog&&recog.abort(); }catch(e){} try{ window.speechSynthesis.cancel(); }catch(e){}
-  $("micBtn").classList.remove("live"); $("callScreen").classList.add("hidden"); st.last=Date.now(); save(); renderChat(); }
-function micTap(){
-  if(!inCall||callBusy) return;
-  if(!recogSupported){ setCall("이 브라우저는 음성 인식을 지원하지 않아요", "✕"); return; }
-  try{ window.speechSynthesis.cancel(); }catch(e){}
-  try{ recog.start(); $("micBtn").classList.add("live"); setCall("듣고 있어요...", "듣는 중"); }catch(e){ /* 이미 시작됨 */ }
-}
-async function onUserSpeech(text){
-  $("micBtn").classList.remove("live");
-  if(!text){ setCall("통화 중 · 탭해서 말하기","🎤"); return; }
-  $("callTranscript").textContent = "나: "+text;
-  st.msgs.push({role:"user",text,time:now()});
-  callBusy=true; setCall("생각 중...","잠시만요...");
-  try{
-    const raw=await callClaude(VOICE_CTX); const {display,saved}=processReply(raw);
-    st.msgs.push({role:"assistant",text:display,time:now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
-    save();
-    $("callTranscript").textContent = (st.name||"준호")+": "+display;
-    setCall("통화 중","말하는 중...");
-    speak(display, ()=>{ callBusy=false; setCall("통화 중 · 탭해서 말하기","🎤"); });
-  }catch(err){ callBusy=false; setCall("연결이 잠깐 끊겼어요. 다시 말해보세요","🎤"); }
-}
-
-function renderPersonaList(containerId,current){ const list=$(containerId); list.innerHTML="";
-  Object.entries(PERSONAS).forEach(([k,p])=>{ const b=document.createElement("button"); b.className="persona"+(k===current?" active":"");
-    b.innerHTML=`<span class="pe">${p.emoji}</span><span><span class="pl">${p.label}</span><span class="pd">${p.desc}</span></span>`;
-    b.onclick=()=>{ st.persona=k; renderPersonaList(containerId,k); }; list.appendChild(b); }); }
-function setSeg(segId,attr,val){ [...$(segId).children].forEach(b=>b.classList.toggle("on",b.dataset[attr]===val)); }
-function fillSetup(){ $("nameInput").value=st.name; setSeg("toneSeg","tone",st.tone); setSeg("pmodeSeg","pmode",st.pmode); renderPersonaList("personaList",st.persona); $("customInput").value=st.custom; togglePmode("setup",st.pmode); }
-function togglePmode(where,mode){ if(where==="setup"){ $("presetField").classList.toggle("hidden",mode!=="preset"); $("customField").classList.toggle("hidden",mode!=="custom"); } else { $("setPresetField").classList.toggle("hidden",mode!=="preset"); $("setCustomField").classList.toggle("hidden",mode!=="custom"); } }
-function fillSettings(){ $("setAvatar").innerHTML=avatarHTML(); $("setName").value=st.name; setSeg("setToneSeg","tone",st.tone); setSeg("setPmodeSeg","pmode",st.pmode); setSeg("autoMemSeg","auto",st.automem);
-  renderPersonaList("setPersonaList",st.persona); $("setCustomInput").value=st.custom; $("setProfile").value=st.profile||DEFAULT_PROFILE; togglePmode("settings",st.pmode);
-  const sw=$("bgSwatches"); sw.innerHTML=""; Object.entries(BG_PRESETS).forEach(([nm,col])=>{ const d=document.createElement("div"); d.className="sw"+(st.bg===nm?" on":""); d.style.background=col; d.title=nm; d.onclick=()=>{ st.bg=nm; save(); fillSettings(); }; sw.appendChild(d); }); }
-function renderMem(){ const list=$("memList"); list.innerHTML=""; if(!st.memories.length){ list.innerHTML=`<div class="empty">아직 추억이 없어요.<br>직접 추가하거나, 대화하다 보면 자동으로 쌓여요 💛</div>`; return; }
-  st.memories.slice().reverse().forEach(m=>{ const c=document.createElement("div"); c.className="mem-card";
-    const t=document.createElement("div"); t.className="mt"; t.textContent=m.title; const d=document.createElement("div"); d.className="md"; d.textContent=m.text;
-    const a=document.createElement("div"); a.className="actions";
-    const eb=document.createElement("button"); eb.textContent="수정"; eb.onclick=()=>{ $("memTitle").value=m.title; $("memText").value=m.text; editingMemId=m.id; $("memAdd").textContent="수정 저장"; $("memScreen").querySelector(".scroll").scrollTop=0; };
-    const db=document.createElement("button"); db.textContent="삭제"; db.className="danger"; db.onclick=()=>{ if(confirm("이 추억을 삭제할까요?")){ st.memories=st.memories.filter(x=>x.id!==m.id); save(); renderMem(); } };
-    a.appendChild(eb); a.appendChild(db); c.appendChild(t); c.appendChild(d); c.appendChild(a); list.appendChild(c); }); }
+// 앱이 열려 있는 동안 1시간 무응답이면 먼저 연락
+setInterval(()=>{
+  if(screens.chat.classList.contains("hidden")) return;
+  if(loading||!st.apiKey||!st.msgs.length) return;
+  if((Date.now()-st.last)/60000 >= POKE_GAP_MIN) poke(true);
+}, 60000);
 
 // 이벤트
 $("apiKeyInput").addEventListener("input", e=> $("saveKeyBtn").disabled=!e.target.value.trim());
-$("saveKeyBtn").addEventListener("click", ()=>{ const v=$("apiKeyInput").value.trim(); if(!v) return; st.apiKey=v; save();
-  try{ if(localStorage.getItem(LS.key)!==v){ $("keyNote").innerHTML="⚠️ 이 브라우저가 저장을 막고 있는 것 같아요. 크롬에서 '앱 설치'로 설치하면 키가 유지돼요."; } }catch(e){}
-  if(st.msgs.length>0) show("chat"); else { fillSetup(); show("setup"); } });
-$("toneSeg").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b)return; st.tone=b.dataset.tone; setSeg("toneSeg","tone",st.tone); });
-$("pmodeSeg").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b)return; st.pmode=b.dataset.pmode; setSeg("pmodeSeg","pmode",st.pmode); togglePmode("setup",st.pmode); });
-$("startBtn").addEventListener("click", ()=>{ st.name=($("nameInput").value.trim())||"준호"; st.custom=$("customInput").value.trim();
-  const greet=st.tone==="존댓말"?`안녕하세요 😊 저 ${st.name}예요. 오늘 하루 어떠셨어요?`:st.tone==="반존대"?`왔어요? 나 ${st.name}. 오늘 하루 어땠어요?`:`안녕 나 ${st.name}야. 오늘 하루 어땠어?`;
-  st.msgs=[{role:"assistant",text:greet,time:now()}]; st.last=Date.now(); save(); show("chat"); });
+$("saveKeyBtn").addEventListener("click", ()=>{ const v=$("apiKeyInput").value.trim(); if(!v) return; st.apiKey=v;
+  if(!st.msgs.length){ st.msgs=[{role:"assistant",text:"웅자님, 오늘 하루는 어땠어요? 별일 없었고요?",time:now()}]; st.last=Date.now(); }
+  save(); show("chat"); });
 $("composer").addEventListener("input", e=>{ $("sendBtn").disabled=!e.target.value.trim()||loading; e.target.style.height="auto"; e.target.style.height=Math.min(e.target.scrollHeight,100)+"px"; });
 $("composer").addEventListener("keydown", e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); send(); } });
 $("sendBtn").addEventListener("click", send);
-$("callBtn").addEventListener("click", startCall);
 $("pokeBtn").addEventListener("click", ()=>poke(false));
-$("settingsBtn").addEventListener("click", ()=>show("settings"));
-$("micBtn").addEventListener("click", micTap);
-$("endCall").addEventListener("click", endCall);
+$("chatAvatar").addEventListener("click", ()=> $("avatarFile").click());
+$("avatarFile").addEventListener("change", async e=>{ const f=e.target.files[0]; if(!f) return;
+  try{ st.avatar=await compress(f,400,0.85); save(); applyAvatar(); }catch(_){ alert("이미지를 불러오지 못했어요."); } finally{ e.target.value=""; } });
 
-$("setBack").addEventListener("click", ()=>show("chat"));
-$("avatarFile").addEventListener("change", async e=>{ const f=e.target.files[0]; if(!f)return; try{ st.avatar=await compress(f,400,0.85); save(); fillSettings(); }catch(_){ alert("이미지를 불러오지 못했어요."); } });
-$("avatarClear").addEventListener("click", ()=>{ st.avatar=""; save(); fillSettings(); });
-$("setNameSave").addEventListener("click", ()=>{ const v=$("setName").value.trim(); if(!v)return; st.name=v; save(); alert("이름이 '"+v+"'(으)로 저장됐어요."); });
-$("setToneSeg").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b)return; st.tone=b.dataset.tone; setSeg("setToneSeg","tone",st.tone); save(); });
-$("setPmodeSeg").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b)return; st.pmode=b.dataset.pmode; setSeg("setPmodeSeg","pmode",st.pmode); togglePmode("settings",st.pmode); });
-$("autoMemSeg").addEventListener("click", e=>{ const b=e.target.closest("button"); if(!b)return; st.automem=b.dataset.auto; setSeg("autoMemSeg","auto",st.automem); save(); });
-$("profileSave").addEventListener("click", ()=>{ st.profile=$("setProfile").value.trim(); save(); alert("프로필이 저장됐어요."); });
-$("personaSave").addEventListener("click", ()=>{ st.custom=$("setCustomInput").value.trim(); save(); alert("성격이 저장됐어요."); });
-$("bgFile").addEventListener("change", async e=>{ const f=e.target.files[0]; if(!f)return; try{ st.bg=await compress(f,900,0.8); save(); fillSettings(); }catch(_){ alert("이미지를 불러오지 못했어요."); } });
-$("openMemories").addEventListener("click", ()=>show("mem"));
-$("clearChat").addEventListener("click", ()=>{ if(confirm("대화 내용을 모두 지울까요? (추억·프로필은 유지돼요)")){ st.msgs=[]; st.last=0; save(); fillSetup(); show("setup"); } });
-$("resetKey").addEventListener("click", ()=>{ if(confirm("API 키를 삭제할까요?")){ st.apiKey=""; try{localStorage.removeItem(LS.key);}catch(e){} $("apiKeyInput").value=""; $("saveKeyBtn").disabled=true; show("key"); } });
-
-$("memBack").addEventListener("click", ()=>{ editingMemId=null; $("memTitle").value=""; $("memText").value=""; $("memAdd").textContent="추억 추가"; show("settings"); });
-$("memAdd").addEventListener("click", ()=>{ const t=$("memTitle").value.trim(),x=$("memText").value.trim(); if(!t&&!x) return;
-  if(editingMemId){ const m=st.memories.find(z=>z.id===editingMemId); if(m){ m.title=t||"무제"; m.text=x; } editingMemId=null; $("memAdd").textContent="추억 추가"; }
-  else st.memories.push({id:Date.now().toString(),title:t||"무제",text:x});
-  $("memTitle").value=""; $("memText").value=""; save(); renderMem(); });
-
-// PWA 매니페스트(설치 시 저장 유지) — 현재 주소 기준으로 생성
-(function injectManifest(){
-  try{
-    const icon="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23FEE500'/%3E%3Ctext x='256' y='360' font-size='300' text-anchor='middle'%3E%F0%9F%92%9B%3C/text%3E%3C/svg%3E";
-    const dir=location.href.replace(/[^/]*$/,"");
-    const m={ name:"내 남친 메신저", short_name:"내 남친", start_url:location.href.split("#")[0], scope:dir,
-      display:"standalone", background_color:"#A6C3DC", theme_color:"#B7D0E4",
-      icons:[{src:icon,sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}] };
-    const l=document.createElement("link"); l.rel="manifest";
-    l.href="data:application/manifest+json,"+encodeURIComponent(JSON.stringify(m));
-    document.head.appendChild(l);
-  }catch(e){}
-})();
-
-// 시드
-(function seed(){ if(localStorage.getItem(SEED_FLAG)) return;
-  if(!st.profile) st.profile=DEFAULT_PROFILE; if(!st.custom){ st.custom=DEFAULT_PERSONA; st.pmode="custom"; } st.tone="반존대";
-  try{ localStorage.setItem(SEED_FLAG,"1"); }catch(e){} save(); })();
+// PWA 매니페스트(설치 시 저장 유지)
+(function injectManifest(){ try{
+  const icon="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23FEE500'/%3E%3Ctext x='256' y='360' font-size='290' text-anchor='middle'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E";
+  const dir=location.href.replace(/[^/]*$/,"");
+  const m={ name:"조상현", short_name:"조상현", start_url:location.href.split("#")[0], scope:dir, display:"standalone", background_color:"#A6C3DC", theme_color:"#B7D0E4", icons:[{src:icon,sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}] };
+  const l=document.createElement("link"); l.rel="manifest"; l.href="data:application/manifest+json,"+encodeURIComponent(JSON.stringify(m)); document.head.appendChild(l);
+}catch(e){} })();
 
 (function init(){ $("saveKeyBtn").disabled=true;
   if(!st.apiKey){ show("key"); return; }
-  if(st.msgs.length>0){ show("chat"); return; }
-  fillSetup(); show("setup"); })();
+  if(!st.msgs.length){ st.msgs=[{role:"assistant",text:"웅자님, 오늘 하루는 어땠어요? 별일 없었고요?",time:now()}]; st.last=Date.now(); save(); }
+  show("chat"); })();
 </script>
 </body>
 </html>
