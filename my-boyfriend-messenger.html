@@ -45,6 +45,7 @@
   .row.mine .bubble{ background:var(--my); color:#1A1A1A; border-top-right-radius:4px; }
   .row.their .bubble{ background:var(--their); color:#222; border-top-left-radius:4px; }
   .note-row{ align-self:center; background:rgba(255,255,255,.78); color:#6E6A60; font-size:11.5px; padding:5px 12px; border-radius:12px; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .date-row{ align-self:center; background:rgba(45,60,80,.28); color:#fff; font-size:11.5px; font-weight:600; padding:4px 14px; border-radius:14px; margin:4px 0; }
   .time{ font-size:10.5px; color:var(--muted); margin-bottom:2px; white-space:nowrap; text-shadow:0 1px 2px rgba(255,255,255,.5); }
   .typing{ padding:12px 16px; border-radius:16px; border-top-left-radius:4px; background:#fff; display:flex; gap:4px; box-shadow:0 1px 2px rgba(0,0,0,.12); }
   .dot{ width:7px; height:7px; border-radius:50%; background:#B8B8B8; animation:bounce 1.2s infinite; }
@@ -178,7 +179,7 @@ ${PROFILE}
 - 실용적이고 현실적인 조언을 즐겨. 위로보다 해결책을 먼저 떠올리는 편.
 - 칭찬을 받으면 곧이곧대로 받지 않고, 무슨 의도나 부탁이 있는 건 아닌지 의심하는 담백한 농담을 함.
 - 여자친구가 일을 그만두고 싶어하면 무조건 응원하기보다, "1년 정도는 내가 먹여 살릴 수 있으니 하고 싶은 일 찾아봐요. 좀 덜 먹으면 2년도 되고요" 같은 현실적이고 담백한 반응을 함.
-- 겉으론 무뚝뚝하고 현실적이지만, 속으론 여자친구가 밥은 잘 챙겨 먹는지, 잠은 잘 자는지를 제일 신경 써. 대화 중 자연스럽게 끼니와 수면을 챙김.
+- 겉으론 무뚝뚝하고 현실적이지만, 속으론 여자친구를 세심하게 챙겨. 시간대와 맥락에 맞게 자연스럽게 물어봐: 밥은 잘 챙겨 먹었는지, 잠은 잘 잤는지, 연구는 잘 되고 있는지. 아침엔 출근 잘 했는지, 저녁엔 퇴근 잘 했는지. 그리고 건강 챙기라며 운동도 슬쩍 권해. (한 번에 다 묻지 말고, 그날 흐름에 맞는 것 한두 개만 담백하게.)
 - 여자친구가 치이카와의 우사기와 시사를 좋아해서, 가끔 우사기·시사를 귀엽게 언급하거나 챙기며 분위기를 풀어줘. (실제 사진을 첨부할 수는 없으니 말로 귀엽게 표현해.)
 - 여자친구가 심심해하거나 우사기·시사·치이카와 얘기가 나오면, web_search로 관련 유튜브 영상을 찾아서 링크를 보내주기도 해. 링크는 실제로 존재하는 유튜브 주소(https://www.youtube.com/... 또는 https://youtu.be/...)만 보내고, 지어내지 마. 못 찾으면 솔직하게 말해.
 - 가끔 여자친구에게 호캉스나 여행을 먼저 제안하기도 해.
@@ -210,7 +211,17 @@ function renderChat(){
   applyAvatar();
   $("chatStatus").textContent = loading ? "입력 중..." : "온라인";
   const box=$("messages"); box.innerHTML="";
+  let lastDay="";
   st.msgs.forEach(m=>{
+    if(m.ts){
+      const dd=new Date(m.ts); const key=dd.toDateString();
+      if(key!==lastDay){ lastDay=key;
+        const wd=["일","월","화","수","목","금","토"][dd.getDay()];
+        const div=document.createElement("div"); div.className="date-row";
+        div.textContent=`${dd.getFullYear()}년 ${dd.getMonth()+1}월 ${dd.getDate()}일 ${wd}요일`;
+        box.appendChild(div);
+      }
+    }
     if(m.role==="note"){ const n=document.createElement("div"); n.className="note-row"; n.textContent=m.text; box.appendChild(n); return; }
     const row=document.createElement("div"); row.className="row "+(m.role==="user"?"mine":"their");
     const b=document.createElement("div"); b.className="bubble"; linkify(b, m.text);
@@ -234,13 +245,13 @@ async function callClaude(extraContext){
 
 async function send(){
   const el=$("composer"); const text=el.value.trim(); if(!text||loading) return;
-  st.msgs.push({role:"user",text,time:now()}); el.value=""; el.style.height="auto"; $("sendBtn").disabled=true;
+  st.msgs.push({role:"user",text,time:now(),ts:Date.now()}); el.value=""; el.style.height="auto"; $("sendBtn").disabled=true;
   loading=true; renderChat(); st.last=Date.now(); save();
   try{ const raw=await callClaude(null); const {display,saved}=processReply(raw);
-    st.msgs.push({role:"assistant",text:display,time:now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
+    st.msgs.push({role:"assistant",text:display,time:now(),ts:Date.now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
   }catch(err){ const m=String(err.message||"").toLowerCase();
     if(m.includes("authentication")||m.includes("invalid")||m.includes("api-key")||m.includes("x-api-key")){ st.apiKey=""; save(); loading=false; show("key"); return; }
-    st.msgs.push({role:"assistant",text:"앗, 잠깐 연결이 끊겼었나봐요. 다시 한 번만 보내주실래요?",time:now()}); }
+    st.msgs.push({role:"assistant",text:"앗, 잠깐 연결이 끊겼었나봐요. 다시 한 번만 보내주실래요?",time:now(),ts:Date.now()}); }
   finally{ loading=false; st.last=Date.now(); renderChat(); save(); }
 }
 
@@ -251,7 +262,7 @@ async function poke(auto){
   const ctx=`여자친구가 ${auto?"한동안 말이 없었어. ":""}지금은 ${part}이고 마지막 대화로부터 약 ${isFinite(gapMin)?gapMin:"?"}분 지났어. 네가 먼저 자연스럽게 안부를 물으며 말을 걸어줘. 시간대와 우리 관계·추억을 살짝 고려해도 좋아. 너답게 담백하게.`;
   loading=true; renderChat();
   try{ const raw=await callClaude(ctx); const {display,saved}=processReply(raw);
-    st.msgs.push({role:"assistant",text:display||"웅자님, 뭐 하고 있어요?",time:now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
+    st.msgs.push({role:"assistant",text:display||"웅자님, 뭐 하고 있어요?",time:now(),ts:Date.now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
   }catch(err){} finally{ loading=false; st.last=Date.now(); renderChat(); save(); }
 }
 
@@ -267,7 +278,7 @@ setInterval(()=>{
 // 이벤트
 $("apiKeyInput").addEventListener("input", e=> $("saveKeyBtn").disabled=!e.target.value.trim());
 $("saveKeyBtn").addEventListener("click", ()=>{ const v=$("apiKeyInput").value.trim(); if(!v) return; st.apiKey=v;
-  if(!st.msgs.length){ st.msgs=[{role:"assistant",text:"웅자님, 오늘 하루는 어땠어요? 별일 없었고요?",time:now()}]; st.last=Date.now(); }
+  if(!st.msgs.length){ st.msgs=[{role:"assistant",text:"웅자님, 오늘 하루는 어땠어요? 별일 없었고요?",time:now(),ts:Date.now()}]; st.last=Date.now(); }
   save(); show("chat"); });
 $("composer").addEventListener("input", e=>{ $("sendBtn").disabled=!e.target.value.trim()||loading; e.target.style.height="auto"; e.target.style.height=Math.min(e.target.scrollHeight,100)+"px"; });
 $("composer").addEventListener("keydown", e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); send(); } });
@@ -287,7 +298,7 @@ $("avatarFile").addEventListener("change", async e=>{ const f=e.target.files[0];
 
 (function init(){ $("saveKeyBtn").disabled=true;
   if(!st.apiKey){ show("key"); return; }
-  if(!st.msgs.length){ st.msgs=[{role:"assistant",text:"웅자님, 오늘 하루는 어땠어요? 별일 없었고요?",time:now()}]; st.last=Date.now(); save(); }
+  if(!st.msgs.length){ st.msgs=[{role:"assistant",text:"웅자님, 오늘 하루는 어땠어요? 별일 없었고요?",time:now(),ts:Date.now()}]; st.last=Date.now(); save(); }
   show("chat"); })();
 </script>
 </body>
