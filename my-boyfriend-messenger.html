@@ -42,6 +42,7 @@
   #messages{ position:relative; z-index:1; flex:1; overflow-y:auto; padding:16px 14px; display:flex; flex-direction:column; gap:10px; }
   .row{ display:flex; align-items:flex-end; gap:6px; } .row.mine{ flex-direction:row-reverse; }
   .bubble{ max-width:74%; padding:10px 13px; border-radius:16px; font-size:14.5px; line-height:1.45; white-space:pre-wrap; word-break:break-word; box-shadow:0 1px 2px rgba(0,0,0,.12); }
+  .bubble img.sent{ display:block; max-width:200px; width:100%; border-radius:10px; margin:2px 0; }
   .row.mine .bubble{ background:var(--my); color:#1A1A1A; border-top-right-radius:4px; }
   .row.their .bubble{ background:var(--their); color:#222; border-top-left-radius:4px; }
   .note-row{ align-self:center; background:rgba(255,255,255,.78); color:#6E6A60; font-size:11.5px; padding:5px 12px; border-radius:12px; box-shadow:0 1px 2px rgba(0,0,0,.08); }
@@ -85,6 +86,8 @@
     <div id="bgLayer"></div>
     <div id="messages"></div>
     <div class="inputbar">
+      <button class="iconbtn" id="photoBtn" title="사진 보내기" style="font-size:23px">📷</button>
+      <input type="file" id="photoFile" accept="image/*" style="display:none">
       <textarea id="composer" rows="1" placeholder="메시지 입력"></textarea>
       <button id="sendBtn" class="send" disabled>전송</button>
     </div>
@@ -125,7 +128,10 @@ const screens = { key:$("keyScreen"), chat:$("chatScreen") };
 function save(){ try{
   localStorage.setItem(LS.key,st.apiKey);
   localStorage.setItem(LS.memories,JSON.stringify(st.memories));
-  localStorage.setItem(LS.msgs,JSON.stringify(st.msgs.slice(-MAX_MSGS)));
+  const trimmed=st.msgs.slice(-MAX_MSGS);
+  const cut=trimmed.length-10;
+  const toStore=trimmed.map((m,i)=> (m.img && i<cut) ? {...m, img:null, text:(m.text&&m.text.trim())?m.text:"📷 사진"} : m );
+  localStorage.setItem(LS.msgs,JSON.stringify(toStore));
   localStorage.setItem(LS.last,String(st.last));
   localStorage.setItem(LS.avatar,st.avatar);
 }catch(e){} }
@@ -224,7 +230,9 @@ function renderChat(){
     }
     if(m.role==="note"){ const n=document.createElement("div"); n.className="note-row"; n.textContent=m.text; box.appendChild(n); return; }
     const row=document.createElement("div"); row.className="row "+(m.role==="user"?"mine":"their");
-    const b=document.createElement("div"); b.className="bubble"; linkify(b, m.text);
+    const b=document.createElement("div"); b.className="bubble";
+    if(m.img){ const im=document.createElement("img"); im.className="sent"; im.src=m.img; b.appendChild(im); }
+    if(m.text){ const tx=document.createElement("div"); linkify(tx, m.text); b.appendChild(tx); }
     const t=document.createElement("span"); t.className="time"; t.textContent=m.time||"";
     row.appendChild(b); row.appendChild(t); box.appendChild(row);
   });
@@ -233,7 +241,19 @@ function renderChat(){
 }
 
 async function callClaude(extraContext){
-  const apiMessages=st.msgs.filter(m=>m.role==="user"||m.role==="assistant").map(m=>({role:m.role==="assistant"?"assistant":"user",content:m.text}));
+  const conv=st.msgs.filter(m=>m.role==="user"||m.role==="assistant");
+  let lastImg=-1; for(let i=conv.length-1;i>=0;i--){ if(conv[i].role==="user"&&conv[i].img){ lastImg=i; break; } }
+  const apiMessages=conv.map((m,i)=>{
+    const role=m.role==="assistant"?"assistant":"user";
+    if(role==="user" && m.img && isDataUrl(m.img) && i===lastImg){
+      const comma=m.img.indexOf(","); const meta=m.img.slice(5,comma); const mediaType=meta.split(";")[0]||"image/jpeg"; const b64=m.img.slice(comma+1);
+      const content=[{type:"image",source:{type:"base64",media_type:mediaType,data:b64}}];
+      content.push({type:"text",text:m.text&&m.text.trim()?m.text:"(사진을 보냄)"});
+      return { role, content };
+    }
+    if(role==="user" && m.img){ return { role, content:(m.text&&m.text.trim()?m.text:"(사진을 보냈음)") }; }
+    return { role, content:m.text };
+  });
   if(extraContext && (apiMessages.length===0||apiMessages[apiMessages.length-1].role==="assistant")){ apiMessages.push({role:"user",content:"(시스템: 지금 상황에 맞게 먼저 말을 걸어줘.)"}); }
   const res=await fetch("https://api.anthropic.com/v1/messages",{ method:"POST",
     headers:{ "content-type":"application/json","x-api-key":st.apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true" },
@@ -245,7 +265,13 @@ async function callClaude(extraContext){
 
 async function send(){
   const el=$("composer"); const text=el.value.trim(); if(!text||loading) return;
-  st.msgs.push({role:"user",text,time:now(),ts:Date.now()}); el.value=""; el.style.height="auto"; $("sendBtn").disabled=true;
+  el.value=""; el.style.height="auto"; $("sendBtn").disabled=true;
+  await sendMessage(text, null);
+}
+
+async function sendMessage(text, img){
+  if(loading) return; if((!text||!text.trim())&&!img) return;
+  st.msgs.push({role:"user",text:(text||"").trim(),img:img||null,time:now(),ts:Date.now()});
   loading=true; renderChat(); st.last=Date.now(); save();
   try{ const raw=await callClaude(null); const {display,saved}=processReply(raw);
     st.msgs.push({role:"assistant",text:display,time:now(),ts:Date.now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
@@ -283,6 +309,10 @@ $("saveKeyBtn").addEventListener("click", ()=>{ const v=$("apiKeyInput").value.t
 $("composer").addEventListener("input", e=>{ $("sendBtn").disabled=!e.target.value.trim()||loading; e.target.style.height="auto"; e.target.style.height=Math.min(e.target.scrollHeight,100)+"px"; });
 $("composer").addEventListener("keydown", e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); send(); } });
 $("sendBtn").addEventListener("click", send);
+$("photoBtn").addEventListener("click", ()=> $("photoFile").click());
+$("photoFile").addEventListener("change", async e=>{ const f=e.target.files[0]; if(!f) return;
+  try{ const img=await compress(f,1024,0.8); const el=$("composer"); const cap=el.value.trim(); el.value=""; el.style.height="auto"; $("sendBtn").disabled=true; await sendMessage(cap, img); }
+  catch(_){ alert("사진을 불러오지 못했어요."); } finally{ e.target.value=""; } });
 $("pokeBtn").addEventListener("click", ()=>poke(false));
 $("chatAvatar").addEventListener("click", ()=> $("avatarFile").click());
 $("avatarFile").addEventListener("change", async e=>{ const f=e.target.files[0]; if(!f) return;
