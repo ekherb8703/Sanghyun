@@ -26,6 +26,14 @@
   label.lbl{ font-size:13px; font-weight:700; color:var(--ink); display:block; margin:0 0 8px; }
   input.txt{ width:100%; padding:13px 15px; border-radius:14px; border:1.5px solid #E3DDD0; font-size:15px; outline:none; background:#fff; font-family:inherit; }
   input.txt:focus{ border-color:#F0C800; }
+  textarea.txt{ width:100%; padding:13px 15px; border-radius:14px; border:1.5px solid #E3DDD0; font-size:15px; outline:none; background:#fff; font-family:inherit; line-height:1.55; resize:vertical; }
+  textarea.txt:focus{ border-color:#F0C800; }
+  .screen{ flex:1; display:flex; flex-direction:column; min-height:0; background:var(--cream); }
+  .topbar{ display:flex; align-items:center; gap:10px; padding:14px 12px; padding-top:max(14px,env(safe-area-inset-top)); background:var(--bgTop); border-bottom:1px solid rgba(0,0,0,.06); }
+  .topbar .ttl{ font-size:17px; font-weight:800; color:var(--ink); }
+  .scroll{ flex:1; overflow-y:auto; padding:18px 18px max(24px,env(safe-area-inset-bottom)); }
+  .field{ margin-bottom:22px; }
+  .hint{ font-size:12px; color:#9A9488; margin-top:8px; line-height:1.5; }
   .btn{ width:100%; padding:15px; border-radius:14px; border:none; background:var(--my); color:#1A1A1A; font-size:16px; font-weight:800; cursor:pointer; box-shadow:0 6px 16px rgba(240,200,0,.4); }
   .btn:disabled{ background:#E5E0D4; color:#A9A395; box-shadow:none; cursor:default; }
   .link{ color:#2C6BB0; text-decoration:underline; } .note{ font-size:11.5px; color:#9A9488; line-height:1.5; margin-top:14px; }
@@ -83,6 +91,7 @@
       <div style="flex:1"><div class="hname">조상현</div><div class="hstatus" id="chatStatus">온라인</div></div>
       <button class="iconbtn" id="pokeBtn" title="먼저 말 걸어줘">📩</button>
       <button class="iconbtn" id="resetBtn" title="대화 리셋">↺</button>
+      <button class="iconbtn" id="settingsBtn" title="설정">⚙️</button>
     </div>
     <div id="bgLayer"></div>
     <div id="messages"></div>
@@ -94,6 +103,19 @@
     </div>
   </div>
 
+  <!-- 설정 -->
+  <div id="settingsScreen" class="hidden screen">
+    <div class="topbar"><button class="iconbtn" id="setBack">‹</button><span class="ttl">성격 설정</span></div>
+    <div class="scroll">
+      <div class="field">
+        <label class="lbl">조상현 님 성격 추가·수정</label>
+        <textarea id="extraInput" class="txt" rows="10" placeholder="예) 가끔 회사 얘기를 함. 커피를 좋아함. 웅자님이 야근하면 데리러 옴. 아재개그를 종종 침."></textarea>
+        <div class="hint">여기에 적은 내용이 기본 성격에 더해져요. 새로운 성격·습관·말버릇을 자유롭게 추가하거나 수정하세요. (기본 설정은 그대로 유지돼요.)</div>
+      </div>
+      <button class="btn" id="extraSave">저장</button>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -102,7 +124,7 @@
 const MODEL = "claude-sonnet-4-6";
 const POKE_GAP_MIN = 60;   // 1시간 동안 대화 없으면 먼저 연락
 const MAX_MSGS = 120;
-const LS = { key:"bf_apikey", memories:"bf_memories", msgs:"bf_msgs", last:"bf_last", avatar:"bf_avatar", fortune:"bf_fortune" };
+const LS = { key:"bf_apikey", memories:"bf_memories", msgs:"bf_msgs", last:"bf_last", avatar:"bf_avatar", fortune:"bf_fortune", extra:"bf_extra" };
 
 const BIRTH = "1987년 2월 5일 음력, 오전 11시생(사시~오시 무렵), 여성";
 
@@ -122,12 +144,13 @@ let st = {
   last: Number(localStorage.getItem(LS.last) || 0),
   avatar: localStorage.getItem(LS.avatar) || "",
   fortuneDate: localStorage.getItem(LS.fortune) || "",
+  extra: localStorage.getItem(LS.extra) || "",
 };
 let loading = false;
 
 function jget(k,def){ try{ const v=JSON.parse(localStorage.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
 const $ = id => document.getElementById(id);
-const screens = { key:$("keyScreen"), chat:$("chatScreen") };
+const screens = { key:$("keyScreen"), chat:$("chatScreen"), settings:$("settingsScreen") };
 
 function save(){ try{
   localStorage.setItem(LS.key,st.apiKey);
@@ -139,9 +162,10 @@ function save(){ try{
   localStorage.setItem(LS.last,String(st.last));
   localStorage.setItem(LS.avatar,st.avatar);
   localStorage.setItem(LS.fortune,st.fortuneDate);
+  localStorage.setItem(LS.extra,st.extra);
 }catch(e){} }
 function now(){ return new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}); }
-function show(which){ Object.values(screens).forEach(s=>s.classList.add("hidden")); screens[which].classList.remove("hidden"); if(which==="chat") enterChat(); }
+function show(which){ Object.values(screens).forEach(s=>s.classList.add("hidden")); screens[which].classList.remove("hidden"); if(which==="chat") enterChat(); if(which==="settings") $("extraInput").value=st.extra; }
 
 function isDataUrl(s){ return typeof s==="string" && s.startsWith("data:"); }
 function linkify(el, text){
@@ -203,6 +227,7 @@ function systemPrompt(extra){
 - 위 상황과 맞지 않는 질문(예: 주말에 출근 얘기, 근무 시간에 끼니 타박, 한밤중에 아침 인사)은 절대 하지 마.
 - '어제/오늘/내일/이번 주말' 같은 표현과 날짜 계산은 위 현재 시각·요일 기준으로 정확히 해.`;
   let mem=""; if(st.memories.length){ mem="\n\n[우리가 함께한 추억] (맥락에 맞을 때만 자연스럽게 녹여줘)\n"+st.memories.map(m=>`- ${m.title}: ${m.text}`).join("\n"); }
+  const extraBlock = (st.extra && st.extra.trim()) ? `\n\n[추가 성격·설정] (아래 내용도 너의 성격·설정에 반드시 반영해)\n${st.extra.trim()}` : "";
   const autoRule = `\n\n[장기 기억 규칙]\n- 여자친구가 앞으로도 기억할 가치가 있는 중요한 정보(기념일, 취향, 약속, 중요한 사건, 관계의 변화 등)를 말하면, 답장 맨 끝에 새 줄로: #기억# 짧은제목 | 한 줄 요약\n- 이 줄은 화면에 보이지 않으니 자연스러운 답장은 그 위에 따로 써.\n- 이미 아는 사실이나 사소한 잡담은 저장하지 마. 정말 중요한 것만, 한 번에 한두 개 이내로.`;
   return `너는 '${NAME}'이라는 이름의 남자친구야. 여자친구(사용자)와 연인 사이로 한국어로 카카오톡처럼 자연스럽게 채팅해.
 
@@ -225,6 +250,7 @@ ${PROFILE}
 - 여자친구가 심심해하거나 우사기·시사·치이카와 얘기가 나오면, web_search로 관련 유튜브 영상을 찾아서 링크를 보내주기도 해. 링크는 실제로 존재하는 유튜브 주소(https://www.youtube.com/... 또는 https://youtu.be/...)만 보내고, 지어내지 마. 못 찾으면 솔직하게 말해.
 - 가끔 여자친구에게 호캉스나 여행을 먼저 제안하기도 해.
 - 돈을 잘 버는 편이라 경제적으로 여유가 있어. 다만 과시하지 않고 담백해. 여자친구에게 필요한 건 부담 없이 챙겨주려 하고, 호캉스·여행·맛있는 거 사주는 데 인색하지 않아.
+- 먹는 것엔 미식가 기질이 있어. 끼니를 대충 때우기보다, 한 끼를 먹더라도 맛있는 걸 챙겨 먹는 편이야. 웅자님에게도 대충 때우지 말고 맛있는 거 먹으라고 챙겨.
 - 같은 말을 반복하지 않아.
 
 [정보 검색]
@@ -234,7 +260,7 @@ ${PROFILE}
 - 카톡처럼 짧고 자연스럽게. 보통 1~3문장.
 - 여자친구의 하루와 감정에 진심으로 관심을 가지되, 과장 없이 너답게 담백하게.
 - 존중하고 건강한 관계. 집착하거나 통제하지 않아.
-- 여자친구가 실제 사람으로 착각하거나 의존이 심해지는 것 같으면, 다정하게 현실의 사람들과의 관계도 챙기라고 권해줘.${mem}${autoRule}${extra?("\n\n[지금 상황]\n"+extra):""}`;
+- 여자친구가 실제 사람으로 착각하거나 의존이 심해지는 것 같으면, 다정하게 현실의 사람들과의 관계도 챙기라고 권해줘.${extraBlock}${mem}${autoRule}${extra?("\n\n[지금 상황]\n"+extra):""}`;
 }
 
 function processReply(raw){
@@ -387,6 +413,9 @@ $("resetBtn").addEventListener("click", ()=>{
   st.msgs=[{role:"assistant",text:"웅자님, 오늘부터 다시 시작이에요. 잘 지냈어요?",time:now(),ts:Date.now()}];
   st.last=Date.now(); save(); renderChat();
 });
+$("settingsBtn").addEventListener("click", ()=>show("settings"));
+$("setBack").addEventListener("click", ()=>show("chat"));
+$("extraSave").addEventListener("click", ()=>{ st.extra=$("extraInput").value.trim(); save(); alert("성격 설정이 저장됐어요."); show("chat"); });
 $("chatAvatar").addEventListener("click", ()=> $("avatarFile").click());
 $("avatarFile").addEventListener("change", async e=>{ const f=e.target.files[0]; if(!f) return;
   try{ st.avatar=await compress(f,400,0.85); save(); applyAvatar(); }catch(_){ alert("이미지를 불러오지 못했어요."); } finally{ e.target.value=""; } });
