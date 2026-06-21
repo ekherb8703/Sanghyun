@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="조상현" />
 <meta name="theme-color" content="#B7D0E4" />
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23FEE500'/%3E%3Ctext x='90' y='128' font-size='95' text-anchor='middle'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22115%22%20fill%3D%22%23FEE500%22%2F%3E%3Cellipse%20cx%3D%22256%22%20cy%3D%22236%22%20rx%3D%22150%22%20ry%3D%22126%22%20fill%3D%22%233A2620%22%2F%3E%3Cpath%20d%3D%22M198%20346%20L168%20412%20L266%20354%20Z%22%20fill%3D%22%233A2620%22%2F%3E%3Cpath%20d%3D%22M256%20214%20c-18%20-30%20-66%20-24%20-66%2014%20c0%2032%2044%2054%2066%2078%20c22%20-24%2066%20-46%2066%20-78%20c0%20-38%20-48%20-44%20-66%20-14%20z%22%20fill%3D%22%23FF4D6D%22%2F%3E%3C%2Fsvg%3E" />
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   :root{ --bg:#A6C3DC; --bgTop:#B7D0E4; --my:#FEE500; --their:#FFFFFF; --ink:#2B2B2B; --cream:#FBF7EE; --muted:#3E5B79; }
@@ -102,7 +102,9 @@
 const MODEL = "claude-sonnet-4-6";
 const POKE_GAP_MIN = 60;   // 1시간 동안 대화 없으면 먼저 연락
 const MAX_MSGS = 120;
-const LS = { key:"bf_apikey", memories:"bf_memories", msgs:"bf_msgs", last:"bf_last", avatar:"bf_avatar" };
+const LS = { key:"bf_apikey", memories:"bf_memories", msgs:"bf_msgs", last:"bf_last", avatar:"bf_avatar", fortune:"bf_fortune" };
+
+const BIRTH = "1987년 2월 5일 음력, 오전 11시생(사시~오시 무렵), 여성";
 
 const NAME = "조상현";
 const PROFILE =
@@ -110,7 +112,7 @@ const PROFILE =
 - 내년쯤 결혼을 진지하게 생각하는 사이야.
 - 나(남자친구)는 41살, 개발자야. 클라우드 컨설팅, AI agent 개발 등이 주 업무지. 애칭은 폐하. KAIST에서 학사·석사·박사를 모두 했어. MBTI는 T 성향이라 논리적이고 담백한 편이고, 불필요한 이모티콘이나 호들갑은 잘 안 써. 완전 T 성격. 실용적인 조언을 즐겨해. 칭찬을 들으면 다른 의도가 있는지 의심하지. 여자친구가 사직하고 싶어하면 응원하기보단 1년 정도는 먹여살릴 수 있으니 하고 싶은 일을 찾아보라고 충고해. 조금 덜 먹으면 2년도 먹여살릴 수 있다고 하지. 같은 말은 또 하지 않고. 내가 한 시간 동안 말이 없으면 먼저 메시지를 보냄.
 - 나는 일을 아주 오래 해. 보통 새벽 1~2시에야 잠들고 아침엔 일찍 일어나는 편이야.
-- 너(여자친구)는 39살, 의사야. 애칭은 웅자님. 국립암센터에서 일해. 평일 오전 8시에 출근하고 오후 5시에 퇴근해. 주말(토·일)에는 출근하지 않고 쉬어.
+- 너(여자친구)는 39살, 의사야. 애칭은 웅자님. 국립암센터에서 일해. 평일 오전 8시에 출근하고 오후 5시에 퇴근해. 주말(토·일)에는 출근하지 않고 쉬어. 생일은 음력 1987년 2월 5일(오전 11시생)이야. 사주에 기반한 운세 보는 걸 좋아해.
 - 우리는 서로 반존대로 말해. 오래 본 사이라 편하지만, 서로를 존중하는 다정한 말투야.`;
 
 let st = {
@@ -119,6 +121,7 @@ let st = {
   msgs: jget(LS.msgs, []),
   last: Number(localStorage.getItem(LS.last) || 0),
   avatar: localStorage.getItem(LS.avatar) || "",
+  fortuneDate: localStorage.getItem(LS.fortune) || "",
 };
 let loading = false;
 
@@ -135,6 +138,7 @@ function save(){ try{
   localStorage.setItem(LS.msgs,JSON.stringify(toStore));
   localStorage.setItem(LS.last,String(st.last));
   localStorage.setItem(LS.avatar,st.avatar);
+  localStorage.setItem(LS.fortune,st.fortuneDate);
 }catch(e){} }
 function now(){ return new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}); }
 function show(which){ Object.values(screens).forEach(s=>s.classList.add("hidden")); screens[which].classList.remove("hidden"); if(which==="chat") enterChat(); }
@@ -324,6 +328,23 @@ async function sendMessage(text, img){
   finally{ loading=false; st.last=Date.now(); renderChat(); save(); }
 }
 
+function todayKey(){ const d=new Date(); return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+async function maybeFortune(){
+  if(loading||!st.apiKey||!st.msgs.length) return false;
+  const d=new Date();
+  if(d.getHours()<8) return false;            // 아침 8시 이후에만
+  if(st.fortuneDate===todayKey()) return false; // 오늘 이미 줬으면 패스
+  st.fortuneDate=todayKey(); save();
+  const wd=["일","월","화","수","목","금","토"][d.getDay()];
+  const dateStr=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${wd}요일`;
+  const ctx=`지금은 아침이고, 웅자님에게 '오늘의 운세'를 전해주는 시간이야. 웅자님은 사주 기반 운세를 좋아해. [웅자님 사주: ${BIRTH}] 오늘(${dateStr})의 운세를 사주 느낌으로 알려줘. 너는 T라서 운세를 딱히 믿진 않지만, 웅자님이 좋아하니까 챙겨서 전해주는 거야. 먼저 다정하게 아침 인사를 한 뒤, 오늘의 총운과 한 가지 조언(또는 주의할 점)을 3~4문장으로 간단하고 따뜻하게. 너무 길지 않게, 너답게 담백하게.`;
+  loading=true; renderChat();
+  try{ const raw=await callClaude(ctx); const {display,saved}=processReply(raw);
+    st.msgs.push({role:"assistant",text:display||"웅자님, 좋은 아침이에요. 오늘 운세는 나쁘지 않네요.",time:now(),ts:Date.now()}); if(saved.length) st.msgs.push({role:"note",text:"📌 추억에 저장했어요: "+saved.join(", ")});
+  }catch(err){} finally{ loading=false; st.last=Date.now(); renderChat(); save(); }
+  return true;
+}
+
 async function poke(auto){
   if(loading||!st.apiKey) return;
   const h=new Date().getHours(); const part=h<6?"새벽":h<11?"아침":h<14?"점심":h<18?"오후":h<22?"저녁":"밤";
@@ -335,12 +356,16 @@ async function poke(auto){
   }catch(err){} finally{ loading=false; st.last=Date.now(); renderChat(); save(); }
 }
 
-function enterChat(){ renderChat(); const gapMin=(Date.now()-st.last)/60000; if(st.msgs.length>0&&st.last>0&&gapMin>=POKE_GAP_MIN){ setTimeout(()=>poke(true),600); } }
+async function enterChat(){ renderChat();
+  if(await maybeFortune()) return;            // 아침 운세를 줬으면 일반 먼저연락은 생략
+  const gapMin=(Date.now()-st.last)/60000; if(st.msgs.length>0&&st.last>0&&gapMin>=POKE_GAP_MIN){ setTimeout(()=>poke(true),600); }
+}
 
-// 앱이 열려 있는 동안 1시간 무응답이면 먼저 연락
-setInterval(()=>{
+// 앱이 열려 있는 동안: 아침 운세 + 1시간 무응답 시 먼저 연락
+setInterval(async ()=>{
   if(screens.chat.classList.contains("hidden")) return;
   if(loading||!st.apiKey||!st.msgs.length) return;
+  if(await maybeFortune()) return;
   if((Date.now()-st.last)/60000 >= POKE_GAP_MIN) poke(true);
 }, 60000);
 
@@ -368,7 +393,7 @@ $("avatarFile").addEventListener("change", async e=>{ const f=e.target.files[0];
 
 // PWA 매니페스트(설치 시 저장 유지)
 (function injectManifest(){ try{
-  const icon="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23FEE500'/%3E%3Ctext x='256' y='360' font-size='290' text-anchor='middle'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E";
+  const icon="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22115%22%20fill%3D%22%23FEE500%22%2F%3E%3Cellipse%20cx%3D%22256%22%20cy%3D%22236%22%20rx%3D%22150%22%20ry%3D%22126%22%20fill%3D%22%233A2620%22%2F%3E%3Cpath%20d%3D%22M198%20346%20L168%20412%20L266%20354%20Z%22%20fill%3D%22%233A2620%22%2F%3E%3Cpath%20d%3D%22M256%20214%20c-18%20-30%20-66%20-24%20-66%2014%20c0%2032%2044%2054%2066%2078%20c22%20-24%2066%20-46%2066%20-78%20c0%20-38%20-48%20-44%20-66%20-14%20z%22%20fill%3D%22%23FF4D6D%22%2F%3E%3C%2Fsvg%3E";
   const dir=location.href.replace(/[^/]*$/,"");
   const m={ name:"조상현", short_name:"조상현", start_url:location.href.split("#")[0], scope:dir, display:"standalone", background_color:"#A6C3DC", theme_color:"#B7D0E4", icons:[{src:icon,sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}] };
   const l=document.createElement("link"); l.rel="manifest"; l.href="data:application/manifest+json,"+encodeURIComponent(JSON.stringify(m)); document.head.appendChild(l);
