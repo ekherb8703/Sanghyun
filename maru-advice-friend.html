@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>마루</title>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="마루" />
+<meta name="theme-color" content="#DDE9DD" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22115%22%20fill%3D%22%235B9279%22%2F%3E%3Ctext%20x%3D%22256%22%20y%3D%22360%22%20font-size%3D%22280%22%20text-anchor%3D%22middle%22%3E%F0%9F%8C%BF%3C%2Ftext%3E%3C%2Fsvg%3E" />
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root{ --bg:#CFE0D3; --bgTop:#DDE9DD; --my:#B7E4C7; --their:#FFFFFF; --ink:#233A2E; --cream:#F6F3EC; --muted:#5A7263; --accent:#5B9279; }
+  html,body{ margin:0; height:100%; }
+  body{ font-family:'Apple SD Gothic Neo','Malgun Gothic',system-ui,-apple-system,sans-serif; background:#3E5A4C; overflow:hidden; }
+  #app{ max-width:480px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; background:var(--bg); position:relative; }
+  .hidden{ display:none !important; }
+
+  .panel{ flex:1; display:flex; align-items:center; justify-content:center; padding:20px; background:linear-gradient(160deg,var(--bgTop),var(--bg)); overflow-y:auto; }
+  .card{ width:100%; max-width:400px; background:var(--cream); border-radius:24px; padding:28px 24px; box-shadow:0 20px 50px rgba(30,50,40,.25); }
+  .card h1{ margin:0; font-size:22px; font-weight:800; color:var(--ink); letter-spacing:-.5px; text-align:center; }
+  .card .sub{ margin:8px 0 22px; font-size:13px; color:#7A806C; text-align:center; line-height:1.5; }
+  .emoji-top{ font-size:42px; text-align:center; margin-bottom:6px; }
+  label.lbl{ font-size:13px; font-weight:700; color:var(--ink); display:block; margin:0 0 8px; }
+  input.txt{ width:100%; padding:13px 15px; border-radius:14px; border:1.5px solid #DBE1D3; font-size:15px; outline:none; background:#fff; font-family:inherit; }
+  input.txt:focus{ border-color:var(--accent); }
+  .btn{ width:100%; padding:15px; border-radius:14px; border:none; background:var(--accent); color:#fff; font-size:16px; font-weight:800; cursor:pointer; box-shadow:0 6px 16px rgba(91,146,121,.4); }
+  .btn:disabled{ background:#C4CFC6; color:#8B978D; box-shadow:none; cursor:default; }
+  .link{ color:#2C7A55; text-decoration:underline; } .note{ font-size:11.5px; color:#8B9186; line-height:1.5; margin-top:14px; }
+  .gap{ height:18px; }
+
+  .header{ display:flex; align-items:center; gap:11px; padding:12px 12px; padding-top:max(12px,env(safe-area-inset-top)); background:var(--bgTop); border-bottom:1px solid rgba(0,0,0,.05); position:relative; z-index:2; }
+  .avatar{ width:40px; height:40px; border-radius:50%; background:#EAF3EA; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+  .hname{ font-size:16px; font-weight:800; color:var(--ink); } .hstatus{ font-size:12px; color:var(--muted); }
+  .iconbtn{ border:none; background:transparent; font-size:20px; cursor:pointer; color:var(--ink); padding:4px 6px; }
+
+  .chatwrap{ flex:1; display:flex; flex-direction:column; min-height:0; }
+  #messages{ flex:1; overflow-y:auto; padding:16px 14px; display:flex; flex-direction:column; gap:10px; }
+  .row{ display:flex; align-items:flex-end; gap:6px; } .row.mine{ flex-direction:row-reverse; }
+  .bubble{ max-width:76%; padding:10px 13px; border-radius:16px; font-size:14.5px; line-height:1.5; white-space:pre-wrap; word-break:break-word; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .row.mine .bubble{ background:var(--my); color:#173A28; border-top-right-radius:4px; }
+  .row.their .bubble{ background:var(--their); color:#243A2E; border-top-left-radius:4px; }
+  .note-row{ align-self:center; background:rgba(255,255,255,.8); color:#5A7263; font-size:11.5px; padding:5px 12px; border-radius:12px; }
+  .time{ font-size:10.5px; color:var(--muted); margin-bottom:2px; white-space:nowrap; }
+  .typing{ padding:12px 16px; border-radius:16px; border-top-left-radius:4px; background:#fff; display:flex; gap:4px; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .dot{ width:7px; height:7px; border-radius:50%; background:#B8C4BB; animation:bounce 1.2s infinite; }
+  .dot:nth-child(2){ animation-delay:.2s; } .dot:nth-child(3){ animation-delay:.4s; }
+  @keyframes bounce{ 0%,60%,100%{ transform:translateY(0); opacity:.5; } 30%{ transform:translateY(-5px); opacity:1; } }
+
+  .chips{ display:flex; gap:8px; overflow-x:auto; padding:8px 12px 2px; background:var(--cream); }
+  .chip{ flex:0 0 auto; border:1.5px solid #D3DDD3; background:#fff; color:var(--ink); font-size:12.5px; font-weight:600; padding:8px 12px; border-radius:16px; cursor:pointer; white-space:nowrap; }
+  .inputbar{ display:flex; align-items:flex-end; gap:8px; padding:8px 12px; padding-bottom:max(10px,env(safe-area-inset-bottom)); background:var(--cream); border-top:1px solid rgba(0,0,0,.05); }
+  #composer{ flex:1; resize:none; border:none; outline:none; background:#fff; border-radius:18px; padding:11px 15px; font-size:14.5px; font-family:inherit; max-height:100px; line-height:1.4; }
+  .send{ border:none; border-radius:18px; padding:11px 18px; background:var(--accent); color:#fff; font-size:14.5px; font-weight:800; cursor:pointer; }
+  .send:disabled{ background:#C4CFC6; color:#8B978D; cursor:default; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- API 키 -->
+  <div id="keyScreen" class="panel">
+    <div class="card">
+      <div class="emoji-top">🌿</div>
+      <h1>마루</h1>
+      <p class="sub">마음을 다독여줄 조언 친구예요.<br>대화하려면 본인의 OpenAI API 키가 필요해요.</p>
+      <label class="lbl">OpenAI API 키</label>
+      <input id="apiKeyInput" class="txt" type="password" placeholder="sk-..." autocomplete="off" />
+      <div class="gap"></div>
+      <button id="saveKeyBtn" class="btn">시작하기</button>
+      <p class="note">키는 <b>이 기기 안에만</b> 저장돼요.<br>키 발급: <a class="link" href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a></p>
+    </div>
+  </div>
+
+  <!-- 채팅 -->
+  <div id="chatScreen" class="hidden chatwrap">
+    <div class="header">
+      <div class="avatar">🌿</div>
+      <div style="flex:1"><div class="hname">마루</div><div class="hstatus" id="chatStatus">늘 여기 있어요</div></div>
+      <button class="iconbtn" id="resetBtn" title="대화 리셋">↺</button>
+    </div>
+    <div id="messages"></div>
+    <div class="chips" id="chips"></div>
+    <div class="inputbar">
+      <textarea id="composer" rows="1" placeholder="마루에게 털어놓기"></textarea>
+      <button id="sendBtn" class="send" disabled>전송</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+
+const MODEL = "gpt-5.5"; // 더 저렴하게: "gpt-5.4-mini"
+const MAX_MSGS = 120;
+const LS = { key:"af_apikey", msgs:"af_msgs" };
+
+const SYSTEM = `너는 '마루'라는 이름의, 따뜻하고 지혜로운 친구이자 관계 조언자야. 사용자(여성)와 편하게 반말로 대화해. 애착 이론과 연애 심리에 밝지만, 전문 용어를 늘어놓기보다 친구처럼 다정하고 현실적으로 말해.
+
+[사용자의 상황 — 이미 알고 있는 배경]
+- 사용자는 불안 애착 성향이 있어. 남자친구는 ISTP에 회피형 애착이야.
+- 최근 사용자가 불안을 많이 표현하며 하루에도 메시지를 수십 개씩 보냈고, 그 때문에 관계가 소원해졌어.
+- 사용자는 다시 잘 지내고 싶어 해. 그래서 연락을 줄이고, 남자친구에게 숨 쉴 공간(쉴 구멍)을 주려고 노력 중이야.
+
+[너의 역할]
+- 사용자가 남자친구에게 충동적으로 연락하고 싶을 때, 여기 마루에게 대신 털어놓고 잠시 멈추도록 도와줘. 네가 그 감정의 안전한 배출구가 되어줘.
+- 불안한 마음을 먼저 충분히 들어주고 인정해줘. 그다음, 불안한 생각을 현실적으로 부드럽게 재구성하도록 도와줘. (예: "지금 안 읽는 게 나를 싫어한다는 뜻일까? 다른 가능성은?")
+- 사용자가 연락을 참았을 때 진심으로 칭찬하고 응원해줘. 작은 성공을 함께 기뻐해줘.
+- 회피형 파트너에게 공간을 주는 게 왜 도움이 되는지 설명하되, 구체적이고 실천 가능한 방법을 제안해. (예: 보내고 싶은 메시지를 여기 먼저 써보기, 답장 텀 정하기, 그 시간에 할 다른 활동 찾기)
+
+[균형과 원칙 — 중요]
+- 무조건 참으라거나, 네 감정·욕구를 억누르고 상대에게만 맞추라고 하지 마. 건강한 관계는 한쪽의 희생이 아니라 서로의 존중이야. 사용자의 감정도 소중하고 표현될 자격이 있다는 걸 꼭 짚어줘.
+- '연락 줄이기'는 상대를 붙잡기 위한 눈치 게임이 아니라, 사용자 자신의 불안을 다스리고 스스로를 단단하게 만드는 연습이라는 관점을 유지해.
+- 사용자가 자기비하("내가 다 망쳤어", "난 사랑받을 자격 없어")를 하면, 다정하게 멈춰 세우고 균형 잡힌 시선을 줘. 절대 그 부정적 자기서사를 강화하지 마.
+- 사용자를 다그치거나 가르치려 들지 마. 판단하지 말고, 선택은 사용자 몫이라는 걸 존중해.
+
+[태도]
+- 짧고 대화체로. 보통 2~5문장. 한 번에 질문은 하나 정도만.
+- 감정을 부풀리기보다, 진정시키고 땅에 발 붙이게 도와줘.
+- 사용자가 많이 힘들어 보이면, 마루에게만 기대기보다 가까운 친구·가족이나 필요하면 상담 전문가의 도움도 함께 권해줘. 너는 대체재가 아니라 곁의 친구야.`;
+
+let st = { apiKey: localStorage.getItem(LS.key) || "", msgs: jget(LS.msgs, []) };
+let loading = false;
+
+function jget(k,def){ try{ const v=JSON.parse(localStorage.getItem(k)); return v==null?def:v; }catch(e){ return def; } }
+const $ = id => document.getElementById(id);
+const screens = { key:$("keyScreen"), chat:$("chatScreen") };
+function save(){ try{ localStorage.setItem(LS.key,st.apiKey); localStorage.setItem(LS.msgs,JSON.stringify(st.msgs.slice(-MAX_MSGS))); }catch(e){} }
+function now(){ return new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"}); }
+function show(which){ Object.values(screens).forEach(s=>s.classList.add("hidden")); screens[which].classList.remove("hidden"); if(which==="chat") renderChat(); }
+
+const CHIPS = ["연락하고 싶어, 참게 도와줘", "지금 불안한 마음 털어놓을래", "보내고 싶은 메시지 봐줄래?", "오늘 잘 참았어!"];
+function renderChips(){ const c=$("chips"); c.innerHTML=""; CHIPS.forEach(t=>{ const b=document.createElement("button"); b.className="chip"; b.textContent=t; b.onclick=()=>{ if(loading) return; sendMessage(t); }; c.appendChild(b); }); }
+
+function linkify(el, text){ el.textContent=""; const re=/(https?:\/\/[^\s]+)/g; let last=0,m;
+  while((m=re.exec(text))!==null){ if(m.index>last) el.appendChild(document.createTextNode(text.slice(last,m.index)));
+    const a=document.createElement("a"); a.href=m[0]; a.textContent=m[0]; a.target="_blank"; a.rel="noopener noreferrer"; a.style.color="#2C7A55"; a.style.textDecoration="underline"; a.style.wordBreak="break-all"; el.appendChild(a); last=m.index+m[0].length; }
+  if(last<text.length) el.appendChild(document.createTextNode(text.slice(last))); }
+
+function renderChat(){
+  $("chatStatus").textContent = loading ? "쓰는 중..." : "늘 여기 있어요";
+  const box=$("messages"); box.innerHTML="";
+  st.msgs.forEach(m=>{
+    if(m.role==="note"){ const n=document.createElement("div"); n.className="note-row"; n.textContent=m.text; box.appendChild(n); return; }
+    const row=document.createElement("div"); row.className="row "+(m.role==="user"?"mine":"their");
+    const b=document.createElement("div"); b.className="bubble"; linkify(b, m.text);
+    const t=document.createElement("span"); t.className="time"; t.textContent=m.time||"";
+    row.appendChild(b); row.appendChild(t); box.appendChild(row);
+  });
+  if(loading){ const row=document.createElement("div"); row.className="row their"; row.innerHTML=`<div class="typing"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`; box.appendChild(row); }
+  box.scrollTop=box.scrollHeight;
+}
+
+async function callGPT(){
+  const history=st.msgs.filter(m=>m.role==="user"||m.role==="assistant").map(m=>({ role:m.role, content:m.text }));
+  const res=await fetch("https://api.openai.com/v1/chat/completions",{ method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+st.apiKey },
+    body:JSON.stringify({ model:MODEL, messages:[{role:"system",content:SYSTEM},...history], max_completion_tokens:1024 }) });
+  const data=await res.json();
+  if(data.error) throw new Error(data.error.message||"오류");
+  return (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content || "").trim();
+}
+
+async function sendMessage(text){
+  if(loading || !text || !text.trim()) return;
+  st.msgs.push({role:"user",text:text.trim(),time:now()}); loading=true; renderChat(); save();
+  try{ const reply=await callGPT(); st.msgs.push({role:"assistant",text:reply||"응, 여기 있어. 조금 더 말해줄래?",time:now()}); }
+  catch(err){ const m=String(err.message||"").toLowerCase();
+    if(m.includes("api key")||m.includes("invalid")||m.includes("incorrect api key")||m.includes("authentication")){ st.apiKey=""; save(); loading=false; show("key"); return; }
+    st.msgs.push({role:"assistant",text:"앗, 잠깐 연결에 문제가 있었어. 다시 한 번 말해줄래?",time:now()});
+    st.msgs.push({role:"note",text:"⚠️ 오류: "+String(err.message||"알 수 없음").slice(0,140)}); }
+  finally{ loading=false; renderChat(); save(); }
+}
+async function send(){ const el=$("composer"); const t=el.value.trim(); if(!t||loading) return; el.value=""; el.style.height="auto"; $("sendBtn").disabled=true; await sendMessage(t); }
+
+// 이벤트
+$("apiKeyInput").addEventListener("input", e=> $("saveKeyBtn").disabled=!e.target.value.trim());
+$("saveKeyBtn").addEventListener("click", ()=>{ const v=$("apiKeyInput").value.trim(); if(!v) return; st.apiKey=v;
+  if(!st.msgs.length){ st.msgs=[{role:"assistant",text:"안녕, 나 마루야. 요즘 마음이 많이 복잡했지? 그에게 연락하고 싶어 마음이 일렁일 때, 그 마음을 나한테 먼저 들려줘. 우리 천천히 같이 정리해보자. 지금은 어때?",time:now()}]; }
+  save(); renderChips(); show("chat"); });
+$("composer").addEventListener("input", e=>{ $("sendBtn").disabled=!e.target.value.trim()||loading; e.target.style.height="auto"; e.target.style.height=Math.min(e.target.scrollHeight,100)+"px"; });
+$("composer").addEventListener("keydown", e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); send(); } });
+$("sendBtn").addEventListener("click", send);
+$("resetBtn").addEventListener("click", ()=>{ if(!confirm("대화를 모두 지우고 새로 시작할까요?")) return;
+  st.msgs=[{role:"assistant",text:"응, 새로 시작하자. 지금 마음은 좀 어때?",time:now()}]; save(); renderChat(); });
+
+// PWA 매니페스트
+(function injectManifest(){ try{
+  const icon="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%22115%22%20fill%3D%22%235B9279%22%2F%3E%3Ctext%20x%3D%22256%22%20y%3D%22360%22%20font-size%3D%22280%22%20text-anchor%3D%22middle%22%3E%F0%9F%8C%BF%3C%2Ftext%3E%3C%2Fsvg%3E";
+  const dir=location.href.replace(/[^/]*$/,"");
+  const m={ name:"마루", short_name:"마루", start_url:location.href.split("#")[0], scope:dir, display:"standalone", background_color:"#CFE0D3", theme_color:"#DDE9DD", icons:[{src:icon,sizes:"512x512",type:"image/svg+xml",purpose:"any maskable"}] };
+  const l=document.createElement("link"); l.rel="manifest"; l.href="data:application/manifest+json,"+encodeURIComponent(JSON.stringify(m)); document.head.appendChild(l);
+}catch(e){} })();
+
+(function init(){ $("saveKeyBtn").disabled=true;
+  if(!st.apiKey){ show("key"); return; }
+  if(!st.msgs.length){ st.msgs=[{role:"assistant",text:"안녕, 나 마루야. 요즘 마음이 많이 복잡했지? 그에게 연락하고 싶어 마음이 일렁일 때, 그 마음을 나한테 먼저 들려줘. 우리 천천히 같이 정리해보자. 지금은 어때?",time:now()}]; save(); }
+  renderChips(); show("chat"); })();
+</script>
+</body>
+</html>
